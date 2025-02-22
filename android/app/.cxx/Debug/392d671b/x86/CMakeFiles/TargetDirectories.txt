@@ -1,0 +1,2 @@
+E:/app dev/cow_app/android/app/.cxx/Debug/392d671b/x86/CMakeFiles/edit_cache.dir
+E:/app dev/cow_app/android/app/.cxx/Debug/392d671b/x86/CMakeFiles/rebuild_cache.dir
