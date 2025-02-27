@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
@@ -29,14 +30,13 @@ class DetailsPage extends HookConsumerWidget {
 
     final cowControllerW = ref.watch(cowController);
     final cow = cowControllerW.cow;
+    Future<void> init() async {
+      isLoading.value = true;
+      await cowControllerW.getCow(context, id);
+      isLoading.value = false;
+    }
 
     useEffect(() {
-      Future<void> init() async {
-        isLoading.value = true;
-        await cowControllerW.getCow(context, id);
-        isLoading.value = false;
-      }
-
       init();
 
       return null;
@@ -74,511 +74,614 @@ class DetailsPage extends HookConsumerWidget {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: isLoading.value
-            ? Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : Stack(
-                fit: StackFit.expand,
-                children: [
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: CachedNetworkImage(
-                      imageUrl: url + cow["photocover"],
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                      height: size.height * 0.4,
-                      width: size.width,
-                    ),
+      body: CustomMaterialIndicator(
+        onRefresh: () async {
+          await init(); // Fetch fresh data
+        },
+        child: SafeArea(
+          child: isLoading.value
+              ? Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  Positioned(
-                    top: 5,
-                    left: 5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        shape: BoxShape.circle,
+                )
+              : Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: CachedNetworkImage(
+                        imageUrl: url + cow["photocover"],
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        height: size.height * 0.4,
+                        width: size.width,
                       ),
-                      child: IconButton(
-                        padding: const EdgeInsets.all(0),
-                        onPressed: () {
-                          context.pop();
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: 25,
-                          color: Colors.black,
+                    ),
+                    Positioned(
+                      top: 5,
+                      left: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          padding: const EdgeInsets.all(0),
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            size: 25,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 5,
-                    right: 5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        shape: BoxShape.circle,
-                      ),
-                      child: MarketPopMenuButton(
-                        cowid: cow["id"],
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: MarketPopMenuButton(
+                          cowid: cow["id"],
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    child: Container(
-                      height: size.height * 0.6,
-                      width: size.width,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      child: Container(
+                        height: size.height * 0.6,
+                        width: size.width,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
                         ),
-                      ),
-                      child: MediaQuery(
-                        data: MediaQuery.of(context).copyWith(
-                          textScaler: TextScaler.linear(1),
-                        ),
-                        child: SingleChildScrollView(
-                          child: AnimatedBuilder(
-                            animation: controller,
-                            builder: (context, child) {
-                              return MediaQuery(
-                                data: MediaQuery.of(context)
-                                    .copyWith(textScaler: TextScaler.linear(1)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Center(
-                                        child: FlutterToggleTab(
-                                          unSelectedBackgroundColors: [
-                                            Color(0xffeaf4f5),
-                                            Color(0xffeaf4f5),
-                                            Color(0xffeaf4f5),
-                                          ],
-                                          marginSelected: EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                            vertical: 4,
-                                          ),
-                                          borderRadius: 20,
-                                          width: 80,
-                                          selectedTextStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          unSelectedTextStyle: TextStyle(
-                                              color: Color(0xff3e897f),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500),
-                                          selectedIndex: toggleValue.value,
-                                          selectedBackgroundColors: [
-                                            Color(0xff3e897f),
-                                            Color(0xff3e897f),
-                                            Color(0xff3e897f),
-                                            Color(0xff3e897f),
-                                          ],
-                                          // minWidth: 100.0,
-
-                                          dataTabs: [
-                                            DataTab(
-                                              title: "Overview",
+                        child: MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                            textScaler: TextScaler.linear(1),
+                          ),
+                          child: SingleChildScrollView(
+                            child: AnimatedBuilder(
+                              animation: controller,
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(
+                                      textScaler: TextScaler.linear(1)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      SizedBox(height: 20),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Center(
+                                          child: FlutterToggleTab(
+                                            unSelectedBackgroundColors: [
+                                              Color(0xffeaf4f5),
+                                              Color(0xffeaf4f5),
+                                              Color(0xffeaf4f5),
+                                            ],
+                                            marginSelected:
+                                                EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                              vertical: 4,
                                             ),
-                                            DataTab(
-                                              title: "Health",
-                                            ),
-                                            DataTab(
-                                              title: "History",
-                                            ),
-                                          ],
-                                          // radiusStyle: true,
-                                          selectedLabelIndex: (index) {
-                                            toggleValue.value = index;
-                                          },
-                                          isScroll: false,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0),
-                                      child: Opacity(
-                                        opacity: opacityAnimation.value,
-                                        child: SlideTransition(
-                                          position: slideAnimation,
-                                          child: Text(
-                                            cow["cowname"],
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              height: 1,
-                                              fontSize: 38,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 6),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0),
-                                      child: Opacity(
-                                        opacity: opacityAnimation.value,
-                                        child: SlideTransition(
-                                          position: slideAnimation,
-                                          child: Text(
-                                            "${cow["breed"]["name"]} - ${capitalize(cow["sex"])} - ${getYears(cow["birthdate"])} yrs",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              height: 1,
+                                            borderRadius: 20,
+                                            width: 80,
+                                            selectedTextStyle: TextStyle(
+                                              color: Colors.white,
                                               fontSize: 18,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w700,
                                             ),
+                                            unSelectedTextStyle: TextStyle(
+                                                color: Color(0xff3e897f),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                            selectedIndex: toggleValue.value,
+                                            selectedBackgroundColors: [
+                                              Color(0xff3e897f),
+                                              Color(0xff3e897f),
+                                              Color(0xff3e897f),
+                                              Color(0xff3e897f),
+                                            ],
+                                            // minWidth: 100.0,
+
+                                            dataTabs: [
+                                              DataTab(
+                                                title: "Overview",
+                                              ),
+                                              DataTab(
+                                                title: "Health",
+                                              ),
+                                              DataTab(
+                                                title: "History",
+                                              ),
+                                            ],
+                                            // radiusStyle: true,
+                                            selectedLabelIndex: (index) {
+                                              toggleValue.value = index;
+                                            },
+                                            isScroll: false,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    if (toggleValue.value == 0) ...[
-                                      SizedBox(height: 10),
-                                      Opacity(
-                                        opacity: opacityAnimation.value,
-                                        child: SlideTransition(
-                                          position: slideAnimation,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 20.0,
-                                            ),
+                                      SizedBox(height: 20),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        child: Opacity(
+                                          opacity: opacityAnimation.value,
+                                          child: SlideTransition(
+                                            position: slideAnimation,
                                             child: Text(
-                                              "ગાયનું નામ ${cow["cowname"]}, ઉંમર ${getYears(cow["birthdate"])} છે અને તેનું વજન ${cow["weight"]} કિગ્રામ છે. છેલ્લી કૃમિનાશક તારીખ ${DateFormat('d-MM-yyyy').format(
-                                                DateTime.parse(
-                                                  cow["last_deworming_date"],
-                                                ),
-                                              )} છે, અને છેલ્લું રસીકરણ ${DateFormat('d-MM-yyyy').format(
-                                                DateTime.parse(
-                                                  cow["last_vaccine_date"],
-                                                ),
-                                              )} તારીખે કરવામાં આવી હતું.",
+                                              cow["cowname"],
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                fontSize: 20,
-                                                height: 1.2,
-                                                fontWeight: FontWeight.w400,
+                                                height: 1,
+                                                fontSize: 38,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                    SizedBox(height: 10),
-                                    if (toggleValue.value == 0) ...[
+                                      SizedBox(height: 6),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: Colors.black
-                                                  .withValues(alpha: 0.2),
-                                            ),
-                                          ),
-                                          // borderRadius: BorderRadius.circular(20),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 10,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xffccebcc),
-                                                  ),
-                                                  child: Text(
-                                                    "Details",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                                CowTableData(
-                                                  title: cow["cowtagno"],
-                                                  status: "Ear Tag",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(DateTime.parse(
-                                                          cow["birthdate"])),
-                                                  status: "Birth Date",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: cow["noofcalves"]
-                                                      .toString(),
-                                                  status: "No. Of Calves",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: "${cow["weight"]} KG",
-                                                  status: "Weight ",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_vaccine_date"],
-                                                    ),
-                                                  ),
-                                                  status: "Last Vaccination",
-                                                  isBorder: true,
-                                                ),
-                                              ],
+                                        child: Opacity(
+                                          opacity: opacityAnimation.value,
+                                          child: SlideTransition(
+                                            position: slideAnimation,
+                                            child: Text(
+                                              "${cow["breed"]["name"]} - ${capitalize(cow["sex"])} - ${getYears(cow["birthdate"])} yrs",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                height: 1,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                    if (toggleValue.value == 1) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: Colors.black
-                                                  .withValues(alpha: 0.2),
-                                            ),
-                                          ),
-                                          // borderRadius: BorderRadius.circular(20),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 10,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xffccebcc),
-                                                  ),
-                                                  child: Text(
-                                                    "Details",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
+                                      if (toggleValue.value == 0) ...[
+                                        SizedBox(height: 10),
+                                        Opacity(
+                                          opacity: opacityAnimation.value,
+                                          child: SlideTransition(
+                                            position: slideAnimation,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 20.0,
+                                              ),
+                                              child: Text(
+                                                "ગાયનું નામ ${cow["cowname"]}, ઉંમર ${getYears(cow["birthdate"])} છે અને તેનું વજન ${cow["weight"]} કિગ્રામ છે. છેલ્લી કૃમિનાશક તારીખ ${cow["cow_health_report"].length != 0 ? DateFormat('d-MM-yyyy').format(
+                                                    DateTime.parse(cow[
+                                                            "cow_health_report"][0]
+                                                        [
+                                                        "last_deworming_date"]),
+                                                  ) : "-"} છે, અને છેલ્લું રસીકરણ ${cow["cow_health_report"].length != 0 ? DateFormat('d-MM-yyyy').format(
                                                     DateTime.parse(
-                                                      cow["last_vaccine_date"],
+                                                      cow["cow_health_report"]
+                                                              [0]
+                                                          ["last_vaccine_date"],
                                                     ),
-                                                  ),
-                                                  status: "Last Vaccination",
-                                                  isBorder: true,
+                                                  ) : "-"} તારીખે કરવામાં આવી હતું.",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  height: 1.2,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_deworming_date"],
-                                                    ),
-                                                  ),
-                                                  status: "DeWorming Date",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["heat_period"],
-                                                    ),
-                                                  ),
-                                                  status: "Heat Period",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_treatment_date"],
-                                                    ),
-                                                  ),
-                                                  status: "Last Sickness",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_calf_birthdate"],
-                                                    ),
-                                                  ),
-                                                  status: "Last Calf Birth",
-                                                  isBorder: true,
-                                                ),
-                                              ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                    if (toggleValue.value == 2) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(
-                                              color: Colors.black
-                                                  .withValues(alpha: 0.2),
+                                      ],
+                                      SizedBox(height: 10),
+                                      if (toggleValue.value == 0) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.2),
+                                              ),
                                             ),
-                                          ),
-                                          // borderRadius: BorderRadius.circular(20),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 10,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xffccebcc),
-                                                  ),
-                                                  child: Text(
-                                                    "Details",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                            // borderRadius: BorderRadius.circular(20),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffccebcc),
+                                                    ),
+                                                    child: Text(
+                                                      "Details",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_vaccine_date"],
-                                                    ),
+                                                  CowTableData(
+                                                    title: cow["cowtagno"],
+                                                    status: "Ear Tag",
+                                                    isBorder: true,
                                                   ),
-                                                  status: "Date of Deworming",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_deworming_date"],
-                                                    ),
+                                                  CowTableData(
+                                                    title: DateFormat(
+                                                            'd-MM-yyyy')
+                                                        .format(DateTime.parse(
+                                                            cow["birthdate"])),
+                                                    status: "Birth Date",
+                                                    isBorder: true,
                                                   ),
-                                                  status:
-                                                      "Foot & Mouth Disease",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["heat_period"],
-                                                    ),
+                                                  CowTableData(
+                                                    title: cow["noofcalves"]
+                                                        .toString(),
+                                                    status: "No. Of Calves",
+                                                    isBorder: true,
                                                   ),
-                                                  status:
-                                                      "Hemorrhagic Septicemia",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_treatment_date"],
-                                                    ),
+                                                  CowTableData(
+                                                    title:
+                                                        "${cow["weight"]} KG",
+                                                    status: "Weight ",
+                                                    isBorder: true,
                                                   ),
-                                                  status: "Black Quarter",
-                                                  isBorder: true,
-                                                ),
-                                                CowTableData(
-                                                  title: DateFormat('d-MM-yyyy')
-                                                      .format(
-                                                    DateTime.parse(
-                                                      cow["last_calf_birthdate"],
-                                                    ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_vaccine_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Last Vaccination",
+                                                    isBorder: true,
                                                   ),
-                                                  status: "Brucellosis",
-                                                  isBorder: true,
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
+                                      ],
+                                      if (toggleValue.value == 1) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.2),
+                                              ),
+                                            ),
+                                            // borderRadius: BorderRadius.circular(20),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffccebcc),
+                                                    ),
+                                                    child: Text(
+                                                      "Details",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_vaccine_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Last Vaccination",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_deworming_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "DeWorming Date",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "heat_period"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Heat Period",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_treatment_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Last Sickness",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_calf_birthdate"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Last Calf Birth",
+                                                    isBorder: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      if (toggleValue.value == 2) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.2),
+                                              ),
+                                            ),
+                                            // borderRadius: BorderRadius.circular(20),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffccebcc),
+                                                    ),
+                                                    child: Text(
+                                                      "Details",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "last_deworming_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Date of Deworming",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "food_and_mouth_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status:
+                                                        "Foot & Mouth Disease",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "hemorrhagic_septicemia_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status:
+                                                        "Hemorrhagic Septicemia",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "black_quarter_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Black Quarter",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    title:
+                                                        cow["cow_health_report"]
+                                                                    .length !=
+                                                                0
+                                                            ? DateFormat(
+                                                                    'd-MM-yyyy')
+                                                                .format(
+                                                                DateTime.parse(
+                                                                  cow["cow_health_report"]
+                                                                          [0][
+                                                                      "brucellossis_date"],
+                                                                ),
+                                                              )
+                                                            : "-",
+                                                    status: "Brucellosis",
+                                                    isBorder: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      SizedBox(height: 20),
                                     ],
-                                    SizedBox(height: 20),
-                                  ],
-                                ),
-                              );
-                            },
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }

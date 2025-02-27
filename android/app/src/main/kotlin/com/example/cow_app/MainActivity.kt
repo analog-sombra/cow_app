@@ -1,4 +1,4 @@
-package com.example.cow_app
+package com.dnhddscst.gaay
 
 import io.flutter.embedding.android.FlutterActivity
 

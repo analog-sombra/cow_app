@@ -36,11 +36,16 @@ class AddCow extends HookConsumerWidget {
     TextEditingController milk = useTextEditingController();
     TextEditingController weight = useTextEditingController();
 
+    TextEditingController lastVaccine = useTextEditingController();
+    TextEditingController lastTreatment = useTextEditingController();
+    TextEditingController lastDeworming = useTextEditingController();
+    TextEditingController lastCalf = useTextEditingController();
+
     ValueNotifier<int> toggleValue = useState<int>(0);
     // ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.MALE);
     ValueNotifier<int> farmerid = useState(0);
 
-    Future<void> cowDateOfBirth() async {
+    Future<void> cowDateChange(TextEditingController dateData) async {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
@@ -52,7 +57,7 @@ class AddCow extends HookConsumerWidget {
         if (!context.mounted) return;
         // formate date dd-mm-yyyy
         // dob.text = picked.toString();
-        dob.text = "${picked.day}-${picked.month}-${picked.year}";
+        dateData.text = "${picked.day}-${picked.month}-${picked.year}";
       }
     }
 
@@ -432,7 +437,7 @@ class AddCow extends HookConsumerWidget {
 
                   // Create date of birth date picker
                   TextFormField(
-                    onTap: cowDateOfBirth,
+                    onTap: () => cowDateChange(dob),
                     readOnly: true,
                     validator: (value) {
                       // return null;
@@ -588,9 +593,7 @@ class AddCow extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+
                   // FlutterToggleTab(
                   //   unSelectedBackgroundColors: [
                   //     Colors.grey.shade200,
@@ -641,6 +644,233 @@ class AddCow extends HookConsumerWidget {
                   // const SizedBox(
                   //   height: 20,
                   // ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Create date of birth date picker
+                  TextFormField(
+                    onTap: () => cowDateChange(lastVaccine),
+                    readOnly: true,
+                    validator: (value) {
+                      // return null;
+                      if (value == "" || value == null || value.isEmpty) {
+                        return "Enter Cow Last Vaccine Date";
+                      }
+                      return null;
+                    },
+                    cursorColor: Colors.black,
+                    cursorWidth: 0.8,
+                    cursorHeight: 25,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                    ),
+                    controller: lastVaccine,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      label: const Text("Last Vaccine Date"),
+                      labelStyle: const TextStyle(
+                        height: 0.1,
+                        color: Color.fromARGB(255, 107, 105, 105),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Create date of birth date picker
+                  TextFormField(
+                    onTap: () => cowDateChange(lastTreatment),
+                    readOnly: true,
+                    validator: (value) {
+                      // return null;
+                      if (value == "" || value == null || value.isEmpty) {
+                        return "Enter Cow Last Treatment Date";
+                      }
+                      return null;
+                    },
+                    cursorColor: Colors.black,
+                    cursorWidth: 0.8,
+                    cursorHeight: 25,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                    ),
+                    controller: lastTreatment,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      label: const Text("Last Treatment Date"),
+                      labelStyle: const TextStyle(
+                        height: 0.1,
+                        color: Color.fromARGB(255, 107, 105, 105),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Create date of birth date picker
+                  TextFormField(
+                    onTap: () => cowDateChange(lastDeworming),
+                    readOnly: true,
+                    validator: (value) {
+                      // return null;
+                      if (value == "" || value == null || value.isEmpty) {
+                        return "Enter Cow Last Deworming Date";
+                      }
+                      return null;
+                    },
+                    cursorColor: Colors.black,
+                    cursorWidth: 0.8,
+                    cursorHeight: 25,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                    ),
+                    controller: lastDeworming,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      label: const Text("Last Deworming Date"),
+                      labelStyle: const TextStyle(
+                        height: 0.1,
+                        color: Color.fromARGB(255, 107, 105, 105),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Create date of birth date picker
+                  TextFormField(
+                    onTap: () => cowDateChange(lastCalf),
+                    readOnly: true,
+                    validator: (value) {
+                      // return null;
+                      if (value == "" || value == null || value.isEmpty) {
+                        return "Enter Cow last calf date";
+                      }
+                      return null;
+                    },
+                    cursorColor: Colors.black,
+                    cursorWidth: 0.8,
+                    cursorHeight: 25,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                    ),
+                    controller: lastCalf,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade700,
+                          width: 0.2,
+                        ),
+                      ),
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      label: const Text("Last Calf Date"),
+                      labelStyle: const TextStyle(
+                        height: 0.1,
+                        color: Color.fromARGB(255, 107, 105, 105),
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   SizedBox(
                     width: size.width - 40,
                     child: ElevatedButton(
@@ -692,7 +922,11 @@ class AddCow extends HookConsumerWidget {
                             "photocover": responseimag.data,
                             "alias": name.text,
                             "status": "ACTIVE",
-                            "noofcalves": 0
+                            "noofcalves": 0,
+                            // "last_treatment_date": lastTreatment.text,
+                            // "last_vaccine_date": lastVaccine.text,
+                            // "last_deworming_date": lastDeworming.text,
+                            // "last_calf_birthdate": lastCalf.text,
                           });
                         }
 
@@ -703,6 +937,10 @@ class AddCow extends HookConsumerWidget {
                         dob.clear();
                         milk.clear();
                         weight.clear();
+                        lastVaccine.clear();
+                        lastTreatment.clear();
+                        lastDeworming.clear();
+                        lastCalf.clear();
                         profileImage.value = null;
                         toggleValue.value = 0;
                       },

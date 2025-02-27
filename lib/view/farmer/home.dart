@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gaay/components/popover.dart';
@@ -77,143 +78,146 @@ class HomePage extends HookConsumerWidget {
                         ),
                       ),
                       Spacer(),
-                      IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () async {
-                          await init();
-                        },
-                      ),
                       PopMenuButton()
                     ],
                   ),
                 ),
-      body: SafeArea(
-        child: isLoading.value
-            ? Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      width: size.width,
-                      padding: EdgeInsets.all(20),
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/health.jpg"),
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
+      body: CustomMaterialIndicator(
+        // backgroundColor: Colors.red,
+        // color: Colors.white,
+        onRefresh: () async {
+          await init(); // Fetch fresh data
+        },
+        child: SafeArea(
+          child: isLoading.value
+              ? Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: size.width,
+                        padding: EdgeInsets.all(20),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/health.jpg"),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
                         ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "18\u2103",
-                            style: TextStyle(height: 1, fontSize: 28),
-                            textScaler: TextScaler.linear(1),
-                          ),
-                          Text(
-                            "Sunny",
-                            style: TextStyle(height: 1, fontSize: 28),
-                            textScaler: TextScaler.linear(1),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CardInfo(
-                                title: "Humidity",
-                                status: "Good",
-                              ),
-                              CardInfo(
-                                title: "Soil Moisture",
-                                status: "Good",
-                              ),
-                              CardInfo(
-                                title: "Preciptation",
-                                status: "Low",
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: size.width,
-                      decoration: BoxDecoration(
-                        color: Color(0xfffaf5f1),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "મારી ગાય",
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w500,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "18\u2103",
+                              style: TextStyle(height: 1, fontSize: 28),
+                              textScaler: TextScaler.linear(1),
                             ),
-                            textScaler: TextScaler.linear(1),
+                            Text(
+                              "Sunny",
+                              style: TextStyle(height: 1, fontSize: 28),
+                              textScaler: TextScaler.linear(1),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CardInfo(
+                                  title: "Humidity",
+                                  status: "Good",
+                                ),
+                                CardInfo(
+                                  title: "Soil Moisture",
+                                  status: "Good",
+                                ),
+                                CardInfo(
+                                  title: "Preciptation",
+                                  status: "Low",
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: size.width,
+                        decoration: BoxDecoration(
+                          color: Color(0xfffaf5f1),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          if (cows.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Center(
-                                child: Text(
-                                  "કોઈ ગાય મળી નથી",
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w400,
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "મારી ગાય",
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textScaler: TextScaler.linear(1),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            if (cows.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                    "કોઈ ગાય મળી નથી",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textScaler: TextScaler.linear(1),
                                   ),
-                                  textScaler: TextScaler.linear(1),
                                 ),
                               ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Wrap(
+                                spacing: 15,
+                                runSpacing: 15,
+                                children: [
+                                  for (var cow in cows)
+                                    CowCard(
+                                      id: cow["id"],
+                                      photo: cow["photocover"],
+                                      name: cow["cowname"],
+                                    ),
+                                ],
+                              ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Wrap(
-                              spacing: 15,
-                              runSpacing: 15,
-                              children: [
-                                for (var cow in cows)
-                                  CowCard(
-                                    id: cow["id"],
-                                    photo: cow["photocover"],
-                                    name: cow["cowname"],
-                                  ),
-                              ],
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

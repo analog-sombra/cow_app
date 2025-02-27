@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gaay/service/api.dart';
 import 'package:gaay/utils/alerts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final userController = ChangeNotifierProvider.autoDispose<UserController>(
@@ -10,6 +9,7 @@ final userController = ChangeNotifierProvider.autoDispose<UserController>(
 
 class UserController extends ChangeNotifier {
   dynamic user;
+  List<dynamic> course = [];
 
   void resetUser() {
     user = null;
@@ -60,7 +60,7 @@ class UserController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<dynamic> getAllLearn(BuildContext context) async {
+  Future<void> getAllLearn(BuildContext context) async {
     final response = await apiCall(
       query: "query GetAllLearn{ getAllLearn{ id, type, title, link, cover }} ",
       variables: {},
@@ -72,10 +72,7 @@ class UserController extends ChangeNotifier {
       erroralert(context, "Error", response.message);
       return;
     }
-
-    Logger().i(response.data["getAllLearn"]);
-
+    course = response.data["getAllLearn"];
     notifyListeners();
-    return response.data["getAllLearn"];
   }
 }

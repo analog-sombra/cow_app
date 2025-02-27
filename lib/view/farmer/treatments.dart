@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gaay/router/routername.dart';
@@ -18,14 +19,13 @@ class TreatmentsPage extends HookConsumerWidget {
 
     final cowControllerW = ref.watch(cowController);
     final cows = cowControllerW.cows;
+    Future<void> init() async {
+      isLoading.value = true;
+      await cowControllerW.getUserCows(context);
+      isLoading.value = false;
+    }
 
     useEffect(() {
-      Future<void> init() async {
-        isLoading.value = true;
-        await cowControllerW.getUserCows(context);
-        isLoading.value = false;
-      }
-
       init();
 
       return null;
@@ -47,29 +47,42 @@ class TreatmentsPage extends HookConsumerWidget {
                 ),
               ),
             ),
-      body: SafeArea(
-        child: isLoading.value
-            ? Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Center(
-                  child: CircularProgressIndicator(),
+      body: CustomMaterialIndicator(
+        onRefresh: () async {
+          await init(); // Fetch fresh data
+        },
+        child: SafeArea(
+          child: isLoading.value
+              ? Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      for (var cow in cows)
+                        TreatmentsCard(
+                          id: cow["id"],
+                          photo: cow["photocover"],
+                          name: cow["cowname"],
+                          vaccine: cow["cow_health_report"].length != 0
+                              ? cow["cow_health_report"][0]["last_vaccine_date"]
+                                  .toString()
+                              : null,
+                          milk: cow["daily_milk_produce"].toString(),
+                          doctor: cow["cow_health_report"].length != 0
+                              ? cow["cow_health_report"][0]
+                                      ["last_treatment_date"]
+                                  .toString()
+                              : null,
+                        ),
+                    ],
+                  ),
                 ),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    for (var cow in cows)
-                      TreatmentsCard(
-                        id: cow["id"],
-                        photo: cow["photocover"],
-                        name: cow["cowname"],
-                        vaccine: cow["last_vaccine_date"].toString(),
-                        milk: cow["daily_milk_produce"].toString(),
-                        doctor: cow["last_treatment_date"].toString(),
-                      ),
-                  ],
-                ),
-              ),
+        ),
       ),
     );
   }
@@ -124,18 +137,18 @@ class TreatmentsCard extends HookConsumerWidget {
   final int id;
   final String photo;
   final String name;
-  final String vaccine;
+  final String? vaccine;
   final String milk;
-  final String doctor;
+  final String? doctor;
 
   const TreatmentsCard({
     super.key,
     required this.photo,
     required this.name,
     required this.id,
-    required this.vaccine,
+    this.vaccine,
     required this.milk,
-    required this.doctor,
+    this.doctor,
   });
 
   @override
@@ -186,7 +199,7 @@ class TreatmentsCard extends HookConsumerWidget {
                       textScaler: TextScaler.linear(1),
                     ),
                     Text(
-                      "છેલ્લી રસીકરણ તારીખ : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(vaccine))}",
+                      "છેલ્લી રસીકરણ તારીખ : ${vaccine != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(vaccine!)) : "NA"}",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -202,7 +215,7 @@ class TreatmentsCard extends HookConsumerWidget {
                       textScaler: TextScaler.linear(1),
                     ),
                     Text(
-                      "આગામી ડૉક્ટર મુલાકાત : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(doctor))}",
+                      "આગામી ડૉક્ટર મુલાકાત : ${doctor != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(doctor!)) : "NA"}",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -221,7 +234,7 @@ class TreatmentsCard extends HookConsumerWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      await treatmentAlert(context,ref,id);
+                      await treatmentAlert(context, ref, id);
                     },
                     child: Container(
                       height: 35,

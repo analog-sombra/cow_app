@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 enum ConnectivityStatus { NotDetermined, isConnected, isDisonnected }
 
@@ -23,8 +22,6 @@ class ConnectivityStatusNotifier extends StateNotifier<ConnectivityStatus> {
     Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> result) {
-      Logger().i(result);
-      Logger().i(result[0]);
       switch (result[0]) {
         case ConnectivityResult.mobile:
         case ConnectivityResult.wifi:

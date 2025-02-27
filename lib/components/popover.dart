@@ -91,7 +91,6 @@ class ListItems extends HookConsumerWidget {
               size: 18,
             ),
             onPressed: () {
-              context.pop();
               context.pushNamed(RouteNames.loan);
             },
             label: Text(
@@ -146,7 +145,6 @@ class ListItems extends HookConsumerWidget {
             ),
             onPressed: () async {
               try {
-                context.pop();
                 await logoutAlert(context, ref);
               } catch (e) {
                 if (!context.mounted) return;

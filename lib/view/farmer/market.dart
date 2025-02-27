@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
@@ -22,15 +23,20 @@ class MarketPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ValueNotifier<int> toggleValue = useState<int>(0);
-
     ValueNotifier<bool> isLoading = useState(false);
 
     final marketControllerW = ref.watch(marketController);
     final marketcows = marketControllerW.marketcows;
+    final marketfoods = marketControllerW.marketfoods;
+    final marketmedicine = marketControllerW.marketmedicine;
 
     Future<void> init() async {
       isLoading.value = true;
       await marketControllerW.getUserCows(context);
+      if (!context.mounted) return;
+      await marketControllerW.getMarketFoods(context);
+      if (!context.mounted) return;
+      await marketControllerW.getMarketMedicine(context);
 
       isLoading.value = false;
     }
@@ -113,154 +119,92 @@ class MarketPage extends HookConsumerWidget {
                 child: CircularProgressIndicator(),
               ),
             )
-          : SafeArea(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    if (toggleValue.value == 0) ...[
-                      for (var cow in marketcows) ...[
-                        MarketCowCard(
-                          id: cow["cow"]["id"],
-                          photo: cow["cow"]["photocover"],
-                          name: cow["cow"]["cowname"],
-                          price: cow["price"].toString(),
-                          age: getYears(cow["cow"]["birthdate"]),
-                          location: "Silvasa",
-                          milk: cow["cow"]["daily_milk_produce"].toString(),
-                          biyat: cow["cow"]["noofcalves"].toString(),
-                        ),
+          : CustomMaterialIndicator(
+              onRefresh: () async {
+                await init(); // Fetch fresh data
+              },
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      if (toggleValue.value == 0) ...[
+                        if (marketcows.isEmpty) ...[
+                          Center(
+                            child: Text(
+                              "No Cows Available",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                        for (var cow in marketcows) ...[
+                          MarketCowCard(
+                            id: cow["cow"]["id"],
+                            photo: cow["cow"]["photocover"],
+                            name: cow["cow"]["cowname"],
+                            price: cow["price"].toString(),
+                            age: getYears(cow["cow"]["birthdate"]),
+                            location: "Silvasa",
+                            milk: cow["cow"]["daily_milk_produce"].toString(),
+                            biyat: cow["cow"]["noofcalves"].toString(),
+                          ),
+                        ],
                       ],
+                      if (toggleValue.value == 1) ...[
+                        if (marketfoods.isEmpty) ...[
+                          Center(
+                            child: Text(
+                              "No Foods Available",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                        for (var food in marketfoods) ...[
+                          MarketMedicineCard(
+                            id: food["id"],
+                            photo: food["cover"],
+                            name: food["name"],
+                            price: food["price"].toString(),
+                          ),
+                        ],
+                      ],
+                      if (toggleValue.value == 2) ...[
+                        if (marketmedicine.isEmpty) ...[
+                          Center(
+                            child: Text(
+                              "No Medicines Available",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                        for (var medicine in marketmedicine) ...[
+                          MarketMedicineCard(
+                            id: medicine["id"],
+                            photo: medicine["cover"],
+                            name: medicine["name"],
+                            price: medicine["price"].toString(),
+                          ),
+                        ],
+                      ]
                     ],
-                    if (toggleValue.value == 1) ...[
-                      MarketMedicineCard(
-                        id: 1,
-                        url: "assets/food/1.jpg",
-                        name: "FAT15000 - Premium Kacchi Binola Khal - 40 Kg",
-                        price: "1590 (39.75/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 2,
-                        url: "assets/food/2.jpg",
-                        name: "Binola Khal - 44 Kg",
-                        price: "1445 (32.84/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 3,
-                        url: "assets/food/3.jpg",
-                        name: "FAT11000 - Binola Khal - 40 Kg",
-                        price: "1530 (38.25/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 4,
-                        url: "assets/food/4.jpg",
-                        name: "Premium Chana Churi - 50 Kg",
-                        price: "2230 (44.60/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 5,
-                        url: "assets/food/5.jpg",
-                        name: "Rajdhani Chana Churi - 50 Kg",
-                        price: "2255 (45.10/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 6,
-                        url: "assets/food/6.jpg",
-                        name: "Soya Chilka - 40 Kg",
-                        price: "1010 (25.25/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 7,
-                        url: "assets/food/7.jpg",
-                        name: "Baarik Chokar - 40 Kg",
-                        price: "1245 (31.13/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 8,
-                        url: "assets/food/8.jpg",
-                        name: "Sarso Ki Khal - 40 Kg",
-                        price: "1290 (32.75/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 9,
-                        url: "assets/food/9.jpg",
-                        name: "Santulit 8000 pellet - 50 Kg",
-                        price: "1295 (25.90/Kg)",
-                      ),
-                      MarketMedicineCard(
-                        id: 10,
-                        url: "assets/food/10.jpg",
-                        name: "Ganga jamuna Chana Churi - 50 Kg",
-                        price: "2250 (45.00/Kg)",
-                      ),
-                    ],
-                    if (toggleValue.value == 2) ...[
-                      MarketMedicineCard(
-                        id: 1,
-                        url: "assets/medicine/1.jpg",
-                        name: "Masti Aid Plus",
-                        price: "340",
-                      ),
-                      MarketMedicineCard(
-                        id: 2,
-                        url: "assets/medicine/2.jpg",
-                        name: "Heat Bolus for cows (10 Bolus)",
-                        price: "199",
-                      ),
-                      MarketMedicineCard(
-                        id: 3,
-                        url: "assets/medicine/3.jpg",
-                        name: "Caliber (Calcium Supplement) 5 Ltr",
-                        price: "725",
-                      ),
-                      MarketMedicineCard(
-                        id: 4,
-                        url: "assets/medicine/4.jpg",
-                        name: "Mastasol Targeting Mastitis",
-                        price: "330",
-                      ),
-                      MarketMedicineCard(
-                        id: 5,
-                        url: "assets/medicine/5.png",
-                        name: "Calci - 15000 - 5 Ltr",
-                        price: "695",
-                      ),
-                      MarketMedicineCard(
-                        id: 6,
-                        url: "assets/medicine/6.jpg",
-                        name: "Poshak Tatwa - 0.3 Kg",
-                        price: "230",
-                      ),
-                      MarketMedicineCard(
-                        id: 7,
-                        url: "assets/medicine/7.jpg",
-                        name: "Pachak Tatwa - 0.2 Kg",
-                        price: "160",
-                      ),
-                      MarketMedicineCard(
-                        id: 8,
-                        url: "assets/medicine/8.jpg",
-                        name: "Livtherapy Ayurvedic Syrup -  0.2 Kg",
-                        price: "165",
-                      ),
-                      MarketMedicineCard(
-                        id: 9,
-                        url: "assets/medicine/9.png",
-                        name: "Deworming Tablets (10 Tablets)",
-                        price: "130",
-                      ),
-                      MarketMedicineCard(
-                        id: 10,
-                        url: "assets/medicine/10.jpg",
-                        name: "Calup Gel (Calcium) 300g - 0.9 Kg",
-                        price: "625",
-                      ),
-                    ]
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -539,14 +483,14 @@ class MarketCowCard extends HookConsumerWidget {
 
 class MarketMedicineCard extends HookConsumerWidget {
   final int id;
-  final String url;
+  final String photo;
   final String name;
   final String price;
 
   const MarketMedicineCard({
     super.key,
     required this.id,
-    required this.url,
+    required this.photo,
     required this.name,
     required this.price,
   });
@@ -573,20 +517,22 @@ class MarketMedicineCard extends HookConsumerWidget {
       child: Column(
         children: [
           ClipRRect(
-            // add only top border
-            clipBehavior: Clip.antiAlias,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            child: Image.asset(
-              url,
-              width: size.width,
-              height: 200,
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-            ),
-          ),
+              // add only top border
+              clipBehavior: Clip.antiAlias,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: url + photo,
+                height: 200,
+                width: size.width,
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              )),
           Container(
             padding: EdgeInsets.all(10),
             child: Column(
