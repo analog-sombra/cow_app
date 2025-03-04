@@ -44,7 +44,7 @@ class FeedbackController extends ChangeNotifier {
       return;
     }
     if (!context.mounted) return;
-    doneAlert(context, "Successful", "Feedback submitted successfully");
+    doneAlert(context, 160,"Successful", "Feedback submitted successfully");
 
     notifyListeners();
   }

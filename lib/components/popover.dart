@@ -85,10 +85,12 @@ class ListItems extends HookConsumerWidget {
                     color: Colors.black.withValues(alpha: 0.6), width: 1),
               ),
             ),
-            icon: Icon(
-              Icons.monetization_on,
-              color: Colors.black,
-              size: 18,
+            icon: Text(
+              "\u{20B9}",
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
             ),
             onPressed: () {
               context.pushNamed(RouteNames.loan);

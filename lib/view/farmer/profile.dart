@@ -70,13 +70,16 @@ class ProfilePage extends HookConsumerWidget {
                   children: [
                     Row(
                       children: [
+                        SizedBox(
+                          width: 10,
+                        ),
                         IconButton(
                           onPressed: () {
                             context.pop();
                           },
                           icon: Icon(
                             Icons.arrow_back,
-                            size: 40,
+                            size: 30,
                             color: Colors.white,
                           ),
                         ),
@@ -93,37 +96,9 @@ class ProfilePage extends HookConsumerWidget {
                         ),
                       ],
                     ),
-
-                    // Positioned(
-                    //   top: 5,
-                    //   left: 5,
-                    //   child: IconButton(
-                    //     onPressed: () {
-                    //       context.pop();
-                    //     },
-                    //     icon: Icon(
-                    //       Icons.arrow_back,
-                    //       size: 40,
-                    //       color: Colors.black,
-                    //     ),
-                    //   ),
-                    // ),
-                    // Positioned(
-                    //   top: size.height * 0.1,
-                    //   left: size.width * 0.2,
-                    //   child: Image.asset(
-                    //     "assets/cow.png",
-                    //     fit: BoxFit.contain,
-                    //     height: size.height * 0.2,
-                    //     width: size.width * 0.6,
-                    //   ),
-                    // ),
                     SizedBox(height: 80),
-
                     Expanded(
                       child: Container(
-                        // height: size.height * 0.6,
-                        width: size.width,
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
@@ -131,153 +106,291 @@ class ProfilePage extends HookConsumerWidget {
                             topRight: Radius.circular(160),
                           ),
                         ),
-                        child: SingleChildScrollView(
-                          child: AnimatedBuilder(
-                            animation: controller,
-                            builder: (context, child) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                    child: Transform.translate(
-                                      offset: Offset(0, -80),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(150),
-                                        child: CachedNetworkImage(
-                                          imageUrl: url + user["photo"],
-                                          fit: BoxFit.cover,
-                                          alignment: Alignment.topCenter,
-                                          width: 160,
-                                          height: 160,
-                                          placeholder: (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Transform.translate(
-                                    offset: Offset(0, -70),
-                                    child: Center(
-                                      child: Text(
-                                        user["name"],
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Opacity(
-                                      opacity: opacityAnimation.value,
-                                      child: SlideTransition(
-                                        position: slideAnimation,
-                                        child: Text(
-                                          "User Information",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            height: 1,
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.bold,
+                        child: Stack(
+                          clipBehavior:
+                              Clip.none, // Ensures the profile image is visible
+                          children: [
+                            SizedBox(
+                              width: size.width,
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.only(
+                                    top:
+                                        100), // Prevents content from overlapping the profile image
+                                child: AnimatedBuilder(
+                                  animation: controller,
+                                  builder: (context, child) {
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Center(
+                                            child: Text(
+                                              user["name"],
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: Colors.black
-                                              .withValues(alpha: 0.2),
+                                        SizedBox(height: 20),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                              ),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Column(
+                                                children: [
+                                                  CowTableData(
+                                                    status: "Name",
+                                                    title: user["alias"],
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    status: "Contact",
+                                                    title:
+                                                        user["contact"] ?? "-",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    status: "Beneficiary Code",
+                                                    title: user[
+                                                            "beneficiary_code"] ??
+                                                        "-",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    status: "Address",
+                                                    title:
+                                                        user["address"] ?? "-",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    status: "Village",
+                                                    title:
+                                                        user["village"] ?? "-",
+                                                    isBorder: true,
+                                                  ),
+                                                  CowTableData(
+                                                    status: "District",
+                                                    title:
+                                                        user["district"] ?? "-",
+                                                    isBorder: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      // borderRadius: BorderRadius.circular(20),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            // Container(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //     horizontal: 10,
-                                            //     vertical: 10,
-                                            //   ),
-                                            //   decoration: BoxDecoration(
-                                            //     color: Color(0xffccebcc),
-                                            //   ),
-                                            //   child: Text(
-                                            //     "Details",
-                                            //     textAlign: TextAlign.center,
-                                            //     style: TextStyle(
-                                            //       fontSize: 20,
-                                            //       fontWeight: FontWeight.w400,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            CowTableData(
-                                              status: "Name",
-                                              title: user["alias"],
-                                              isBorder: true,
-                                            ),
-                                            CowTableData(
-                                              status: "Contact",
-                                              title: user["contact"] ?? "-",
-                                              isBorder: true,
-                                            ),
-                                            CowTableData(
-                                              status: "Beneficiary Code",
-                                              title: user["beneficiary_code"] ?? "-",
-                                              isBorder: true,
-                                            ),
-                                            CowTableData(
-                                              status: "Address",
-                                              title: user["address"] ?? "-",
-                                              isBorder: true,
-                                            ),
-                                            CowTableData(
-                                              status: "Village",
-                                              title: user["village"] ?? "-",
-                                              isBorder: true,
-                                            ),
-                                            CowTableData(
-                                              status: "District",
-                                              title: user["district"] ?? "-",
-                                              isBorder: true,
-                                            ),
-                                            // CowTableData(
-                                            //   status: "EMI Date",
-                                            //   title: "5th Day of Month",
-                                            //   isBorder: true,
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                        SizedBox(height: 20),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top:
+                                  -80, // Keeps it positioned outside scrollable content
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(150),
+                                  child: CachedNetworkImage(
+                                    imageUrl: url + user["photo"],
+                                    fit: BoxFit.cover,
+                                    alignment: Alignment.topCenter,
+                                    width: 160,
+                                    height: 160,
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
-                                  SizedBox(height: 20),
-                                ],
-                              );
-                            },
-                          ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
+                    ),
+                    // Expanded(
+                    //   child: Container(
+                    //     // height: size.height * 0.6,
+                    //     width: size.width,
+                    //     decoration: const BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.only(
+                    //         topLeft: Radius.circular(160),
+                    //         topRight: Radius.circular(160),
+                    //       ),
+                    //     ),
+                    //     child: SingleChildScrollView(
+                    //       child: AnimatedBuilder(
+                    //         animation: controller,
+                    //         builder: (context, child) {
+                    //           return Column(
+                    //             mainAxisSize: MainAxisSize.min,
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //             children: [
+                    //               Center(
+                    //                 child: Transform.translate(
+                    //                   offset: Offset(0, -80),
+                    //                   child: ClipRRect(
+                    //                     borderRadius:
+                    //                         BorderRadius.circular(150),
+                    //                     child: CachedNetworkImage(
+                    //                       imageUrl: url + user["photo"],
+                    //                       fit: BoxFit.cover,
+                    //                       alignment: Alignment.topCenter,
+                    //                       width: 160,
+                    //                       height: 160,
+                    //                       placeholder: (context, url) => Center(
+                    //                           child:
+                    //                               CircularProgressIndicator()),
+                    //                       errorWidget: (context, url, error) =>
+                    //                           Icon(Icons.error),
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               Transform.translate(
+                    //                 offset: Offset(0, -70),
+                    //                 child: Padding(
+                    //                   padding: const EdgeInsets.symmetric(
+                    //                       horizontal: 20),
+                    //                   child: Center(
+                    //                     child: Text(
+                    //                       user["name"],
+                    //                       textAlign: TextAlign.center,
+                    //                       style: TextStyle(
+                    //                         fontSize: 24,
+                    //                         fontWeight: FontWeight.bold,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               Padding(
+                    //                 padding: const EdgeInsets.symmetric(
+                    //                     horizontal: 20.0),
+                    //                 child: Opacity(
+                    //                   opacity: opacityAnimation.value,
+                    //                   child: SlideTransition(
+                    //                     position: slideAnimation,
+                    //                     child: Text(
+                    //                       "User Information",
+                    //                       textAlign: TextAlign.center,
+                    //                       style: TextStyle(
+                    //                         height: 1,
+                    //                         fontSize: 28,
+                    //                         fontWeight: FontWeight.bold,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               SizedBox(height: 20),
+                    //               Padding(
+                    //                 padding: const EdgeInsets.symmetric(
+                    //                     horizontal: 20.0),
+                    //                 child: Container(
+                    //                   decoration: BoxDecoration(
+                    //                     borderRadius: BorderRadius.circular(20),
+                    //                     border: Border.all(
+                    //                       color: Colors.black
+                    //                           .withValues(alpha: 0.2),
+                    //                     ),
+                    //                   ),
+                    //                   // borderRadius: BorderRadius.circular(20),
+                    //                   child: ClipRRect(
+                    //                     borderRadius: BorderRadius.circular(20),
+                    //                     child: Column(
+                    //                       mainAxisAlignment:
+                    //                           MainAxisAlignment.start,
+                    //                       crossAxisAlignment:
+                    //                           CrossAxisAlignment.stretch,
+                    //                       children: [
+                    //                         // Container(
+                    //                         //   padding: const EdgeInsets.symmetric(
+                    //                         //     horizontal: 10,
+                    //                         //     vertical: 10,
+                    //                         //   ),
+                    //                         //   decoration: BoxDecoration(
+                    //                         //     color: Color(0xffccebcc),
+                    //                         //   ),
+                    //                         //   child: Text(
+                    //                         //     "Details",
+                    //                         //     textAlign: TextAlign.center,
+                    //                         //     style: TextStyle(
+                    //                         //       fontSize: 20,
+                    //                         //       fontWeight: FontWeight.w400,
+                    //                         //     ),
+                    //                         //   ),
+                    //                         // ),
+                    //                         CowTableData(
+                    //                           status: "Name",
+                    //                           title: user["alias"],
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         CowTableData(
+                    //                           status: "Contact",
+                    //                           title: user["contact"] ?? "-",
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         CowTableData(
+                    //                           status: "Beneficiary Code",
+                    //                           title: user["beneficiary_code"] ??
+                    //                               "-",
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         CowTableData(
+                    //                           status: "Address",
+                    //                           title: user["address"] ?? "-",
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         CowTableData(
+                    //                           status: "Village",
+                    //                           title: user["village"] ?? "-",
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         CowTableData(
+                    //                           status: "District",
+                    //                           title: user["district"] ?? "-",
+                    //                           isBorder: true,
+                    //                         ),
+                    //                         // CowTableData(
+                    //                         //   status: "EMI Date",
+                    //                         //   title: "5th Day of Month",
+                    //                         //   isBorder: true,
+                    //                         // ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               SizedBox(height: 20),
+                    //             ],
+                    //           );
+                    //         },
+                    //       ),
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -299,52 +412,54 @@ class CowTableData extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-            decoration: BoxDecoration(
-              color: Color(0xffccebcc),
-              border: isBorder
-                  ? Border.all(
-                      color: Colors.black.withValues(alpha: 0.2),
-                    )
-                  : null,
-            ),
-            child: Text(
-              status,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+              decoration: BoxDecoration(
+                color: Color(0xffccebcc),
+                border: isBorder
+                    ? Border.all(
+                        color: Colors.black.withValues(alpha: 0.2),
+                      )
+                    : null,
+              ),
+              child: Text(
+                status,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-            decoration: BoxDecoration(
-              border: isBorder
-                  ? Border.all(
-                      color: Colors.black.withValues(alpha: 0.2),
-                    )
-                  : null,
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w500,
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+              decoration: BoxDecoration(
+                border: isBorder
+                    ? Border.all(
+                        color: Colors.black.withValues(alpha: 0.2),
+                      )
+                    : null,
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black.withValues(alpha: 0.8),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

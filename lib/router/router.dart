@@ -90,8 +90,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             name: RouteNames.payment,
-            path: "payment",
-            builder: (context, state) => PaymentPage(),
+            path: "payment/:amount",
+            builder: (context, state) => PaymentPage(
+              amount: state.pathParameters["amount"]!,
+            ),
           ),
           GoRoute(
             name: RouteNames.profile,

@@ -700,54 +700,56 @@ class CowTableData extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-            decoration: BoxDecoration(
-              color: Color(0xffccebcc),
-              border: isBorder
-                  ? Border.all(
-                      color: Colors.black.withValues(alpha: 0.2),
-                    )
-                  : null,
-            ),
-            child: Text(
-              status,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+              decoration: BoxDecoration(
+                color: Color(0xffccebcc),
+                border: isBorder
+                    ? Border.all(
+                        color: Colors.black.withValues(alpha: 0.2),
+                      )
+                    : null,
               ),
-              textScaler: TextScaler.linear(1),
+              child: Text(
+                status,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+                textScaler: TextScaler.linear(1),
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-            decoration: BoxDecoration(
-              border: isBorder
-                  ? Border.all(
-                      color: Colors.black.withValues(alpha: 0.2),
-                    )
-                  : null,
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w500,
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+              decoration: BoxDecoration(
+                border: isBorder
+                    ? Border.all(
+                        color: Colors.black.withValues(alpha: 0.2),
+                      )
+                    : null,
               ),
-              textScaler: TextScaler.linear(1),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black.withValues(alpha: 0.8),
+                  fontWeight: FontWeight.w500,
+                ),
+                textScaler: TextScaler.linear(1),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

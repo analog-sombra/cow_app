@@ -338,32 +338,32 @@ class MarketCowCard extends HookConsumerWidget {
                   ),
                 ),
               ),
-              Positioned(
-                left: 10,
-                bottom: 10,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Color(0xfffdfeb9),
-                    borderRadius: BorderRadius.circular(6),
-                    // left red border only
-                    border: Border(
-                      left: BorderSide(
-                        color: Colors.green,
-                        width: 4,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    "Added 1 WEEK(S) AGO",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   left: 10,
+              //   bottom: 10,
+              //   child: Container(
+              //     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //     decoration: BoxDecoration(
+              //       color: Color(0xfffdfeb9),
+              //       borderRadius: BorderRadius.circular(6),
+              //       // left red border only
+              //       border: Border(
+              //         left: BorderSide(
+              //           color: Colors.green,
+              //           width: 4,
+              //         ),
+              //       ),
+              //     ),
+              //     child: Text(
+              //       "Added 1 WEEK(S) AGO",
+              //       style: TextStyle(
+              //         fontSize: 14,
+              //         color: Colors.black,
+              //         fontWeight: FontWeight.w700,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           Container(
@@ -455,7 +455,10 @@ class MarketCowCard extends HookConsumerWidget {
                     ),
                   ),
                   onPressed: () {
-                    context.pushNamed(RouteNames.payment);
+                    context.pushNamed(
+                      RouteNames.payment,
+                      pathParameters: {"amount": price.toString()},
+                    );
                   },
                   child: Row(
                     children: [
@@ -572,7 +575,12 @@ class MarketMedicineCard extends HookConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pushNamed(
+                          RouteNames.payment,
+                          pathParameters: {"amount": price.toString()},
+                        );
+                      },
                       child: Row(
                         children: [
                           SizedBox(width: 10),

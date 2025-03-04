@@ -46,7 +46,7 @@ class MarketController extends ChangeNotifier {
       return;
     }
     if (!context.mounted) return;
-    doneAlert(context, "Successful", "Cow added to market successfully");
+    doneAlert(context, 160, "Successful", "Cow added to market successfully");
 
     notifyListeners();
   }

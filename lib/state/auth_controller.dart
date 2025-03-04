@@ -74,6 +74,7 @@ class AuthController extends ChangeNotifier {
     if (!context.mounted) return true;
     isOtp = true;
     mobileNumber = code;
+    doneAlert(context, 160, "Successful", "OTP sent successfully");
     return true;
     // notifyListeners();
   }

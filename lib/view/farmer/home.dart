@@ -121,7 +121,7 @@ class HomePage extends HookConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "18\u2103",
+                              "29\u2103",
                               style: TextStyle(height: 1, fontSize: 28),
                               textScaler: TextScaler.linear(1),
                             ),

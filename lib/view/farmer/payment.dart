@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gaay/utils/alerts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PaymentPage extends HookConsumerWidget {
-  const PaymentPage({super.key});
+  final String amount;
+  const PaymentPage({super.key, required this.amount});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +38,7 @@ class PaymentPage extends HookConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '\u{20B9} 95,000',
+                    '\u{20B9} $amount',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -56,10 +56,54 @@ class PaymentPage extends HookConsumerWidget {
               SizedBox(width: 20),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    doneAlert(context, "Successful",
-                        "Payment successful for \u{20B9} 117 with reference ID: 789293462893, Thank you for your purchase.");
-                    context.pop();
+                  onPressed: () async {
+                    // create a alert
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              "Payment Confirmation",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Payment successful for \u{20B9} $amount with reference ID: 789293462893, Thank you for your purchase.",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                SizedBox(height: 14),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blueAccent,
+                                    minimumSize: Size(double.infinity, 50),
+                                  ),
+                                  onPressed: () {
+                                    context.pop();
+                                    context.pop();
+                                  },
+                                  child: Text(
+                                    "Close",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+
+                    // doneAlert(context, 120, "Successful",
+                    //     "Payment successful for \u{20B9} $amount with reference ID: 789293462893, Thank you for your purchase.");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
@@ -107,7 +151,7 @@ class PaymentPage extends HookConsumerWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            _buildPaymentOption('UPI - PayTM'),
+            // _buildPaymentOption('UPI - PayTM'),
             // _buildPaymentOption('UPI - CRED UPI'),
             _buildPaymentOption('UPI - Google Pay'),
             SizedBox(height: 16),
@@ -118,6 +162,7 @@ class PaymentPage extends HookConsumerWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            _buildPaymentOption('COD'),
             _buildPaymentOptionWithOffers('UPI', '2 Offers'),
             _buildPaymentOption('Cards'),
             _buildPaymentOption('Netbanking'),

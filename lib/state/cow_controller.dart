@@ -73,7 +73,7 @@ class CowController extends ChangeNotifier {
       return;
     }
     if (!context.mounted) return;
-    doneAlert(context, "Completed", "New Cow Added Successfully");
+    doneAlert(context,160, "Completed", "New Cow Added Successfully");
     notifyListeners();
   }
 }

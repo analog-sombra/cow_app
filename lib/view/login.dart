@@ -269,9 +269,8 @@ class LoginPage extends HookConsumerWidget {
                               }
                               isTimerRunning.value = true;
                               startTimer(60);
-                              if (!context.mounted) return;
-                              doneAlert(context, "Successful",
-                                  "OTP sent successfully");
+                        
+                         
                             },
                             child: const Text(
                               'Send OTP',

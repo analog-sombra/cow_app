@@ -43,7 +43,8 @@ void simpleDoneAlert(BuildContext context, String message) {
   );
 }
 
-void doneAlert(BuildContext context, String title, String subTitle) {
+void doneAlert(
+    BuildContext context, double height, String title, String subTitle) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       elevation: 0,
@@ -52,7 +53,7 @@ void doneAlert(BuildContext context, String title, String subTitle) {
       content: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
         child: SizedBox(
-          height: 160,
+          height: height,
           child: AwesomeSnackbarContent(
             title: title,
             titleTextStyle: const TextStyle(
@@ -204,6 +205,7 @@ Future<void> treatmentAlert(BuildContext context, WidgetRef ref, int id) async {
                     context.pop();
                     doneAlert(
                       context,
+                      160,
                       "સંદેશો",
                       "તમારી વિનંતી સંદર્ભ નંબર 234533 દ્વારા સફળતાપૂર્વક જનરેટ કરવામાં આવી છે .ડૉક્ટર ટૂંક સમયમાં જ હાજરી આપશે.",
                     );
@@ -240,6 +242,7 @@ Future<void> treatmentAlert(BuildContext context, WidgetRef ref, int id) async {
                     context.pop();
                     doneAlert(
                       context,
+                      160,
                       "સંદેશો",
                       "તમારી વિનંતી સંદર્ભ નંબર દ્વારા સફળતાપૂર્વક જનરેટ કરવામાં આવી છે .ડૉક્ટર ટૂંક સમયમાં જ હાજરી આપશે.",
                     );
@@ -291,6 +294,7 @@ Future<void> treatmentAlert(BuildContext context, WidgetRef ref, int id) async {
                     context.pop();
                     doneAlert(
                       context,
+                      160,
                       "સંદેશો",
                       "તમારી વિનંતી સંદર્ભ નંબર દ્વારા સફળતાપૂર્વક જનરેટ કરવામાં આવી છે .ડૉક્ટર ટૂંક સમયમાં જ હાજરી આપશે.",
                     );
@@ -338,6 +342,7 @@ Future<void> treatmentAlert(BuildContext context, WidgetRef ref, int id) async {
                     context.pop();
                     doneAlert(
                       context,
+                      160,
                       "સંદેશો",
                       "તમારી વિનંતી સંદર્ભ નંબર દ્વારા સફળતાપૂર્વક જનરેટ કરવામાં આવી છે .ડૉક્ટર ટૂંક સમયમાં જ હાજરી આપશે.",
                     );
