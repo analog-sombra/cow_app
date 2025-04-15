@@ -31,7 +31,6 @@ class CoursePage extends HookConsumerWidget {
       await userControllerW.getAllLearn(context);
 
       final course = userControllerW.course;
-      Logger().i("Course: ${course.length}");
       // filter all data by type FOOD HEALTH MEDICINE add in respective list
       for (var i = 0; i < course.length; i++) {
         if (course[i]["type"] == "FOOD") {

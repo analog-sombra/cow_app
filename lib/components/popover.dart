@@ -24,7 +24,7 @@ class PopMenuButton extends StatelessWidget {
           radius: 2,
           direction: PopoverDirection.bottom,
           width: 200,
-          height: 280,
+          height: 300,
           arrowHeight: 15,
           arrowWidth: 30,
         );
@@ -123,6 +123,32 @@ class ListItems extends HookConsumerWidget {
             },
             label: Text(
               "Feedback",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+                side: BorderSide(
+                    color: Colors.black.withValues(alpha: 0.6), width: 1),
+              ),
+            ),
+            icon: Icon(
+              Icons.help,
+              color: Colors.black,
+              size: 18,
+            ),
+            onPressed: () {
+              context.pop();
+              context.pushNamed(RouteNames.help);
+            },
+            label: Text(
+              "Help",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black,

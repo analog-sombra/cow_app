@@ -1,15 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:gaay/components/bottombar.dart';
+import 'package:gaay/components/cowbottombar.dart';
+import 'package:gaay/components/foodbottombar.dart';
+import 'package:gaay/components/medicinebottombar.dart';
 import 'package:gaay/router/routername.dart';
 import 'package:gaay/state/auth_controller.dart';
+import 'package:gaay/view/doctor/cowhealthform.dart';
+import 'package:gaay/view/doctor/cowtreatment.dart';
+import 'package:gaay/view/doctor/doctorhome.dart';
 import 'package:gaay/view/farmer/feedback.dart';
+import 'package:gaay/view/farmer/help.dart';
 import 'package:gaay/view/farmer/loan.dart';
 import 'package:gaay/view/farmer/payment.dart';
 import 'package:gaay/view/farmer/profile.dart';
+import 'package:gaay/view/sellers/sellercow.dart';
+import 'package:gaay/view/sellers/sellerfood.dart';
+import 'package:gaay/view/sellers/sellermedicine.dart';
 import 'package:gaay/view/stockman/add_cow.dart';
 import 'package:gaay/view/farmer/details.dart';
 import 'package:gaay/view/error404.dart';
 import 'package:gaay/view/login.dart';
+import 'package:gaay/view/stockman/editcow.dart';
+import 'package:gaay/view/stockman/farmercows.dart';
 import 'package:gaay/view/welcome.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -35,6 +47,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           if (role == "STOCKMEN") {
             return "/addcow";
           }
+          if (role == "SELLERCOW") {
+            return "/sellercow";
+          }
+          if (role == "SELLERMEDICINE") {
+            return "/sellermedicine";
+          }
+          if (role == "SELLERFODDER") {
+            return "/sellerfood";
+          }
+          if (role == "DOCTOR") {
+            return "/doctorhome";
+          }
           return "/home";
         }
       }
@@ -56,10 +80,68 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     errorBuilder: (BuildContext context, state) => const ErrorPage(),
     routes: [
       GoRoute(
-        name: RouteNames.addcow,
-        path: "/addcow",
-        builder: (context, state) => AddCow(),
+        name: RouteNames.doctorhome,
+        path: "/doctorhome",
+        builder: (context, state) => DoctorHome(),
+        routes: [
+          GoRoute(
+              name: RouteNames.cowtreatment,
+              path: "cowtreatment/:id",
+              builder: (context, state) => CowTreatment(
+                    id: int.parse(
+                      state.pathParameters["id"]!,
+                    ),
+                  ),
+              routes: [
+                GoRoute(
+                  name: RouteNames.cowhealthform,
+                  path: "cowhealthform",
+                  builder: (context, state) => CowHealthForm(
+                    id: int.parse(
+                      state.pathParameters["id"]!,
+                    ),
+                  ),
+                )
+              ]),
+        ],
       ),
+      GoRoute(
+        name: RouteNames.sellercow,
+        path: "/sellercow",
+        builder: (context, state) => CowCustomBottomNavBars(),
+      ),
+      GoRoute(
+        name: RouteNames.sellermedicine,
+        path: "/sellermedicine",
+        builder: (context, state) => MedicineCustomBottomNavBars(),
+      ),
+      GoRoute(
+        name: RouteNames.sellerfood,
+        path: "/sellerfood",
+        builder: (context, state) => FoodCustomBottomNavBars(),
+      ),
+      GoRoute(
+          name: RouteNames.addcow,
+          path: "/addcow",
+          builder: (context, state) => AddCow(),
+          routes: [
+            GoRoute(
+              name: RouteNames.farmercows,
+              path: "farmercows/:id",
+              builder: (context, state) => FarmerCows(
+                id: int.parse(state.pathParameters["id"]!),
+              ),
+              routes: [],
+            ),
+            GoRoute(
+              name: RouteNames.editcow,
+              path: "editcow/:id",
+              builder: (context, state) => EditCow(
+                id: int.parse(state.pathParameters["id"]!),
+              ),
+              routes: [],
+            ),
+          ]),
       GoRoute(
           name: RouteNames.welcome,
           path: "/welcome",
@@ -104,6 +186,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             name: RouteNames.feedback,
             path: "feedback",
             builder: (context, state) => FeedBackPage(),
+          ),
+          GoRoute(
+            name: RouteNames.help,
+            path: "help",
+            builder: (context, state) => HelpPage(),
           ),
         ],
       ),

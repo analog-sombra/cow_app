@@ -106,6 +106,14 @@ class AuthController extends ChangeNotifier {
     if (!context.mounted) return;
     if (data.data["verifyOtp"]["role"] == "STOCKMEN") {
       context.replace("/addcow");
+    } else if (data.data["verifyOtp"]["role"] == "SELLERCOW") {
+      context.replace("/sellercow");
+    } else if (data.data["verifyOtp"]["role"] == "SELLERMEDICINE") {
+      context.replace("/sellermedicine");
+    } else if (data.data["verifyOtp"]["role"] == "SELLERFODDER") {
+      context.replace("/sellerfood");
+    } else if (data.data["verifyOtp"]["role"] == "DOCTOR") {
+      context.replace("/doctorhome");
     } else {
       context.replace("/home");
     }

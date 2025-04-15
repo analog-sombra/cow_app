@@ -23,7 +23,7 @@ class CowController extends ChangeNotifier {
 
     final response = await apiCall(
       query:
-          "query GetUserCows(\$getUserCowsId:Int!){getUserCows (id:\$getUserCowsId){ id, cowname, breed { name }, daily_milk_produce, photocover, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date}}} ",
+          "query GetUserCows(\$getUserCowsId:Int!){getUserCows (id:\$getUserCowsId){ id, cowname, cowstatus, breed { name }, daily_milk_produce, photocover, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date}}} ",
       variables: {"getUserCowsId": userid},
       headers: {"content-type": "*/*"},
     );
@@ -41,10 +41,29 @@ class CowController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getUserCowsById(BuildContext context, int id) async {
+    final response = await apiCall(
+      query:
+          "query GetUserCows(\$getUserCowsId:Int!){getUserCows (id:\$getUserCowsId){ id, cowname, cowstatus, breed { name }, daily_milk_produce, photocover, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date}}} ",
+      variables: {"getUserCowsId": id},
+      headers: {"content-type": "*/*"},
+    );
+
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+
+    cows = response.data["getUserCows"];
+
+    notifyListeners();
+  }
+
   Future<void> getCow(BuildContext context, int id) async {
     final response = await apiCall(
       query:
-          "query GetCowById(\$id:Int!){getCowById (id:\$id){ id, cowname, breed { name }, photocover, sex, birthdate, cowtagno, noofcalves, weight, daily_milk_produce, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date }}} ",
+          "query GetCowById(\$id:Int!){getCowById (id:\$id){ id, farmerid, cowname, cowstatus, breed { name }, photocover, sex, birthdate, cowtagno, noofcalves, weight, daily_milk_produce, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date }}} ",
       variables: {"id": id},
       headers: {"content-type": "*/*"},
     );
@@ -67,13 +86,34 @@ class CowController extends ChangeNotifier {
       variables: {"createCowInput": data},
       headers: {"content-type": "*/*"},
     );
+
     if (!response.status) {
       if (!context.mounted) return;
       erroralert(context, "Error", response.message);
       return;
     }
     if (!context.mounted) return;
-    doneAlert(context,160, "Completed", "New Cow Added Successfully");
+    doneAlert(context, 160, "Completed", "New Cow Added Successfully");
     notifyListeners();
+  }
+
+  Future<bool> updateCow(
+      BuildContext context, Map<String, dynamic> data) async {
+    final response = await apiCall(
+      query:
+          "mutation UpdateCow(\$updateCowInput: UpdateCowInput!){ updateCow(updateCowInput:\$updateCowInput){ id }}",
+      variables: {"updateCowInput": data},
+      headers: {"content-type": "*/*"},
+    );
+
+    if (!response.status) {
+      if (!context.mounted) return false;
+      erroralert(context, "Error", response.message);
+      return false;
+    }
+    if (!context.mounted) return false;
+    doneAlert(context, 160, "Completed", "Cow updated Successfully");
+    notifyListeners();
+    return true;
   }
 }

@@ -75,4 +75,40 @@ class UserController extends ChangeNotifier {
     course = response.data["getAllLearn"];
     notifyListeners();
   }
+
+  Future<void> getUserById(BuildContext context, int id) async {
+    final response = await apiCall(
+      query:
+          "query GetUser(\$id:Int!){getUserById (id:\$id){ id, role, name, contact, alias, photo, address, village, district, beneficiary_code }} ",
+      variables: {"id": id},
+      headers: {"content-type": "*/*"},
+    );
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+
+    user = response.data["getUserById"];
+
+    notifyListeners();
+  }
+
+  Future<void> editUserPhoto(BuildContext context, int id, String photo) async {
+    final response = await apiCall(
+      query:
+          "mutation EditUserPhoto(\$id:Int!, \$photo:String!){editUserPhoto (id:\$id, photo: \$photo){ id, role, name, contact, alias, photo, address, village, district, beneficiary_code }} ",
+      variables: {"id": id, "photo": photo},
+      headers: {"content-type": "*/*"},
+    );
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+    if (!context.mounted) return;
+    doneAlert(context, 160, "successfully ", "Photo updated successfully");
+
+    notifyListeners();
+  }
 }

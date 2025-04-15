@@ -204,6 +204,7 @@ class HomePage extends HookConsumerWidget {
                                       id: cow["id"],
                                       photo: cow["photocover"],
                                       name: cow["cowname"],
+                                      cowstatus: cow["cowstatus"],
                                     ),
                                 ],
                               ),
@@ -274,11 +275,13 @@ class CowCard extends HookConsumerWidget {
   final int id;
   final String photo;
   final String name;
+  final String cowstatus;
   const CowCard({
     super.key,
     required this.photo,
     required this.name,
     required this.id,
+    required this.cowstatus,
   });
 
   @override
@@ -294,12 +297,20 @@ class CowCard extends HookConsumerWidget {
       },
       child: Container(
         width: (size.width * 0.53) - 40,
-        height: (size.width * 0.53) - 30,
+        height: (size.height * 0.22),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(
             Radius.circular(20),
+          ),
+          border: Border.all(
+            color: cowstatus == "ALIVE"
+                ? Colors.green
+                : cowstatus == "DEAD"
+                    ? Colors.red
+                    : Colors.orange,
+            width: 3,
           ),
         ),
         child: Column(

@@ -662,3 +662,171 @@ Future<void> cowSellAlert(
     ),
   );
 }
+
+Future<void> cowTreatmentAlert(
+    BuildContext context, WidgetRef ref, int cowid) async {
+  TextEditingController price = TextEditingController();
+  return await showDialog(
+    context: context,
+    builder: (context) => BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+      child: AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(16.0),
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(5),
+        backgroundColor: Colors.white,
+        content: Container(
+          padding: const EdgeInsets.all(10),
+          child: MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(1)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Add Cow Treatment",
+                  textScaler: TextScaler.linear(1),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      height: 1,
+                      color: Colors.black,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'Enter Doctor Fee',
+                  style: TextStyle(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                  textScaler: const TextScaler.linear(1),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  cursorColor: Colors.black,
+                  cursorWidth: 0.8,
+                  cursorHeight: 25,
+                  keyboardType: TextInputType.name,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.0,
+                  ),
+                  controller: price,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade700,
+                        width: 0.2,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade700,
+                        width: 0.2,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade700,
+                        width: 0.2,
+                      ),
+                    ),
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                    label: const Text("Price"),
+                    labelStyle: const TextStyle(
+                      height: 0.1,
+                      color: Color.fromARGB(255, 107, 105, 105),
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          // width: 100,
+                          height: 35,
+                          decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Center(
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          if (price.text.isEmpty) {
+                            erroralert(
+                                context, "Error", "Please enter the price");
+                            return;
+                          }
+                          // await ref.watch(marketController).addMarketCow(
+                          //       context,
+                          //       price.text,
+                          //       cowid,
+                          //     );
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          // width: 100,
+                          height: 35,
+                          decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Center(
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}

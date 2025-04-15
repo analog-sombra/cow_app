@@ -8,6 +8,8 @@ import 'package:gaay/state/market_controller.dart';
 import 'package:gaay/utils/const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
 String getYears(String date) {
   final now = DateTime.now();
@@ -156,6 +158,7 @@ class MarketPage extends HookConsumerWidget {
                             location: "Silvasa",
                             milk: cow["cow"]["daily_milk_produce"].toString(),
                             biyat: cow["cow"]["noofcalves"].toString(),
+                            number: cow["farmer"]["contact"].toString(),
                           ),
                         ],
                       ],
@@ -177,7 +180,7 @@ class MarketPage extends HookConsumerWidget {
                             id: food["id"],
                             photo: food["cover"],
                             name: food["name"],
-                            price: food["price"].toString(),
+                            price: food["sale_price"].toString(),
                           ),
                         ],
                       ],
@@ -199,7 +202,7 @@ class MarketPage extends HookConsumerWidget {
                             id: medicine["id"],
                             photo: medicine["cover"],
                             name: medicine["name"],
-                            price: medicine["price"].toString(),
+                            price: medicine["sale_price"].toString(),
                           ),
                         ],
                       ]
@@ -259,6 +262,7 @@ class MarketCowCard extends HookConsumerWidget {
   final String location;
   final String milk;
   final String biyat;
+  final String number;
   const MarketCowCard({
     super.key,
     required this.id,
@@ -269,6 +273,7 @@ class MarketCowCard extends HookConsumerWidget {
     required this.location,
     required this.milk,
     required this.biyat,
+    required this.number,
   });
 
   @override
@@ -454,11 +459,19 @@ class MarketCowCard extends HookConsumerWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {
-                    context.pushNamed(
-                      RouteNames.payment,
-                      pathParameters: {"amount": price.toString()},
+                  onPressed: () async {
+                    // context.pushNamed(
+                    //   RouteNames.payment,
+                    //   pathParameters: {"amount": price.toString()},
+                    // );
+
+                    final link = WhatsAppUnilink(
+                      phoneNumber: '91$number',
+                      text: "નમસ્તે મને તમારી ગીર ગાય $name ખરીદવામાં રસ છે.",
                     );
+                    // Convert the WhatsAppUnilink instance to a Uri.
+                    // The "launch" method is part of "url_launcher".
+                    await launchUrl(link.asUri());
                   },
                   child: Row(
                     children: [

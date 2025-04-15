@@ -1,10 +1,8 @@
-import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 // import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gaay/state/auth_controller.dart';
-import 'package:gaay/utils/alerts.dart';
+// import 'package:gaay/state/auth_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -15,7 +13,7 @@ class WelcomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
 
-    final authControllerW = ref.watch(authController);
+    // final authControllerW = ref.watch(authController);
 
     AnimationController controller = useAnimationController(
       duration: const Duration(seconds: 1),
@@ -43,15 +41,19 @@ class WelcomePage extends HookConsumerWidget {
           fit: StackFit.expand,
           children: [
             Positioned(
-              top: 5,
+              top: 2,
               left: 0,
               right: 0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage("assets/logo.png"),
-                    radius: 25, // Larger size for the avatar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.asset(
+                      "assets/logo.png",
+                      height: 50,
+                      width: 50,
+                    ),
                   ),
                   SizedBox(
                     width: 20,
