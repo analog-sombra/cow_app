@@ -16,6 +16,17 @@ class UserController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<int> getCurrentUserId(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString("id");
+    if (id == null) {
+      if (!context.mounted) return 0;
+      erroralert(context, "Error", "User id not found");
+      return 0;
+    }
+    return int.parse(id);
+  }
+
   Future<void> getUser(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final id = prefs.getString("id");
@@ -43,7 +54,7 @@ class UserController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getFarmerByCode(BuildContext context, String code) async {
+  Future<bool> getFarmerByCode(BuildContext context, String code) async {
     final response = await apiCall(
       query:
           "query GetFarmerByCode(\$code:String!){ getFarmerByCode(code:\$code){ id, role, name, contact, alias, photo, address, village, district, beneficiary_code }} ",
@@ -52,12 +63,13 @@ class UserController extends ChangeNotifier {
     );
 
     if (!response.status) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       erroralert(context, "Error", response.message);
-      return;
+      return false;
     }
     user = response.data["getFarmerByCode"];
     notifyListeners();
+    return true;
   }
 
   Future<void> getAllLearn(BuildContext context) async {
@@ -107,7 +119,7 @@ class UserController extends ChangeNotifier {
       return;
     }
     if (!context.mounted) return;
-    doneAlert(context, 160, "successfully ", "Photo updated successfully");
+    doneAlert(context, 160, "Successful ", "Photo updated successfully");
 
     notifyListeners();
   }

@@ -50,22 +50,38 @@ class HomePage extends HookConsumerWidget {
                   centerTitle: true,
                   title: Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(60),
+                      if (user["photo"] == null)
+                        ...[
+                          CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            radius: 15,
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+
+                        ]
+                      else ...[
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(60),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: url + user["photo"],
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                            width: 30,
+                            height: 30,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          ),
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl: url + user["photo"],
-                          fit: BoxFit.cover,
-                          alignment: Alignment.topCenter,
-                          width: 30,
-                          height: 30,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
-                      ),
+                      ],
                       SizedBox(width: 10),
                       Text(
                         "નમસ્તે ${user["alias"]}",

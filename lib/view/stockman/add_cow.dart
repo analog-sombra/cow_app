@@ -12,9 +12,11 @@ import 'package:gaay/state/cow_controller.dart';
 import 'package:gaay/state/user_controller.dart';
 import 'package:gaay/utils/alerts.dart';
 import 'package:gaay/utils/const.dart';
+import 'package:gaay/utils/methods.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AddCow extends HookConsumerWidget {
   const AddCow({super.key});
@@ -25,7 +27,7 @@ class AddCow extends HookConsumerWidget {
     final cowControllerW = ref.watch(cowController);
     final cows = cowControllerW.cows;
 
-    // final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     ValueNotifier<bool> isLoading = useState(false);
 
     final GlobalKey<FormState> formKey =
@@ -96,8 +98,33 @@ class AddCow extends HookConsumerWidget {
         final ImageSource? source = await showImageSourceDialog(context);
         if (source == null) return; // User closed the dialog
 
-        final XFile? image = await picker.pickImage(source: source);
+        final XFile? image = await picker.pickImage(
+            source: source,
+            requestFullMetadata: false,
+            maxHeight: 500,
+            maxWidth: 500);
         if (image == null) return;
+
+        // final XFile? imageFile = await compressAndGetImageFile(
+        //     File(image.path), image.path.split('/').last);
+
+        // if (imageFile == null) {
+        //   if (context.mounted) {
+        //     erroralert(context, "Error", 'Failed to pick image try again');
+        //   }
+        //   return;
+        // }
+
+        // final int imagesize = await imageFile.length();
+        // const int maxSizeInBytes = 1 * 1024 * 1024; // 1 MB
+
+        // if (imagesize > maxSizeInBytes) {
+        //   if (context.mounted) {
+        //     erroralert(context, "Error", 'Image size should be less than 1 MB');
+        //   }
+        //   return;
+        // }
+        // profileImage.value = File(imageFile.path);
         profileImage.value = File(image.path);
 
         final responseimag =
@@ -125,6 +152,26 @@ class AddCow extends HookConsumerWidget {
         }
       }
     }
+
+    Future<void> init() async {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String version = packageInfo.version;
+      String code = packageInfo.buildNumber;
+
+      // show version snakerbar
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Version: $version ($code)"),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+
+    useEffect(() {
+      init();
+      return null;
+    }, []);
 
     return PopScope(
       canPop: true,
@@ -190,83 +237,148 @@ class AddCow extends HookConsumerWidget {
                       key: formKey,
                       child: Column(
                         children: [
-                          TextFormField(
-                            readOnly: userControllerW.user != null,
-                            // onTap: startscan,
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.name,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
-                            ),
-                            controller: farmer,
-                            decoration: InputDecoration(
-                              suffix: userControllerW.user != null
-                                  ? InkWell(
-                                      onTap: () async {
-                                        farmerid.value = 0;
-                                        userControllerW.resetUser();
-                                      },
-                                      child: Icon(Icons.edit),
-                                    )
-                                  : InkWell(
-                                      onTap: () async {
-                                        isLoading.value = true;
-                                        if (farmer.text.isEmpty) {
-                                          erroralert(
-                                            context,
-                                            "Error",
-                                            "Please enter farmer code",
-                                          );
-                                          return;
-                                        } else {
-                                          await userControllerW.getFarmerByCode(
-                                            context,
-                                            farmer.text,
-                                          );
+                          SizedBox(
+                            width: size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.72,
+                                  child: TextFormField(
+                                    readOnly: userControllerW.user != null,
+                                    // onTap: startscan,
+                                    cursorColor: Colors.black,
+                                    cursorWidth: 0.8,
+                                    cursorHeight: 25,
+                                    keyboardType: TextInputType.name,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                    ),
+                                    controller: farmer,
+                                    decoration: InputDecoration(
+                                      // suffix: userControllerW.user != null
+                                      //     ? InkWell(
+                                      //         onTap: () async {
+                                      //           farmerid.value = 0;
+                                      //           userControllerW.resetUser();
+                                      //         },
+                                      //         child: Icon(Icons.edit),
+                                      //       )
+                                      //     : InkWell(
+                                      //         onTap: () async {},
+                                      //         child: Icon(Icons.search),
+                                      //       ),
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.shade700,
+                                          width: 0.2,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.shade700,
+                                          width: 0.2,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey.shade700,
+                                          width: 0.2,
+                                        ),
+                                      ),
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 20),
+                                      label: const Text("Farmer Id"),
+                                      labelStyle: const TextStyle(
+                                        height: 0.1,
+                                        color:
+                                            Color.fromARGB(255, 107, 105, 105),
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                if (userControllerW.user != null) ...[
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      farmerid.value = 0;
+                                      userControllerW.resetUser();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 15,
+                                      ),
+                                      backgroundColor: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ] else ...[
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      isLoading.value = true;
+                                      if (farmer.text.isEmpty) {
+                                        erroralert(
+                                          context,
+                                          "Error",
+                                          "Please enter farmer code",
+                                        );
+                                        isLoading.value = false;
+
+                                        return;
+                                      } else {
+                                        final res = await userControllerW
+                                            .getFarmerByCode(
+                                          context,
+                                          farmer.text,
+                                        );
+                                        if (res) {
                                           farmerid.value =
                                               userControllerW.user["id"];
                                           if (!context.mounted) return;
                                           await cowControllerW.getUserCowsById(
                                               context,
                                               userControllerW.user["id"]);
-                                          isLoading.value = false;
                                         }
-                                      },
-                                      child: Icon(Icons.search),
+
+                                        isLoading.value = false;
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 15,
+                                      ),
+                                      backgroundColor: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                                     ),
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Farmer Id"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
-                                fontSize: 16.0,
-                              ),
+                                    child: Icon(
+                                      Icons.search,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                           const SizedBox(
@@ -290,26 +402,47 @@ class AddCow extends HookConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  InkWell(
-                                    onTap: changeImage,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(60),
-                                      ),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            url + userControllerW.user["photo"],
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.topCenter,
-                                        width: 45,
-                                        height: 45,
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
+                                  if (userControllerW.user["photo"] !=
+                                      null) ...[
+                                    InkWell(
+                                      onTap: changeImage,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(60),
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: url +
+                                              userControllerW.user["photo"],
+                                          fit: BoxFit.cover,
+                                          alignment: Alignment.topCenter,
+                                          width: 45,
+                                          height: 45,
+                                          placeholder: (context, url) => Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ] else ...[
+                                    Container(
+                                      width: 45,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(60),
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 30,
+                                        color: Colors.grey.shade500,
+                                      ),
+                                    ),
+                                  ],
+
                                   SizedBox(
                                     width: 10,
                                   ),
@@ -319,7 +452,8 @@ class AddCow extends HookConsumerWidget {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        userControllerW.user["name"],
+                                        longText(
+                                            userControllerW.user["name"], 22),
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 18.0,
@@ -339,11 +473,11 @@ class AddCow extends HookConsumerWidget {
                                     ],
                                   ),
                                   Spacer(),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 20,
-                                    color: Colors.black,
-                                  )
+                                  // Icon(
+                                  //   Icons.arrow_forward_ios,
+                                  //   size: 20,
+                                  //   color: Colors.black,
+                                  // )
                                 ],
                               ),
                             ),
@@ -383,7 +517,7 @@ class AddCow extends HookConsumerWidget {
                                   CowCard(
                                     id: cow["id"],
                                     photo: cow["photocover"],
-                                    name: cow["cowname"],
+                                    name: longText(cow["cowname"], 16),
                                   ),
                               ],
                             ),

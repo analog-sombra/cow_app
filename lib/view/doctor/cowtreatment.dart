@@ -505,7 +505,7 @@ class CowTreatment extends HookConsumerWidget {
                                                                 ),
                                                               )
                                                             : "-",
-                                                    status: "Last Calf Birth",
+                                                    status: "Last Calvin Date",
                                                     isBorder: true,
                                                   ),
                                                 ],
@@ -631,24 +631,30 @@ class CowTreatment extends HookConsumerWidget {
                                                     status: "Black Quarter",
                                                     isBorder: true,
                                                   ),
-                                                  CowTableData(
-                                                    title:
-                                                        cow["cow_health_report"]
-                                                                    .length !=
-                                                                0
-                                                            ? DateFormat(
-                                                                    'd-MM-yyyy')
-                                                                .format(
-                                                                DateTime.parse(
-                                                                  cow["cow_health_report"]
-                                                                          [0][
-                                                                      "brucellossis_date"],
-                                                                ),
-                                                              )
-                                                            : "-",
-                                                    status: "Brucellosis",
-                                                    isBorder: true,
-                                                  ),
+                                                  if (cow["cow_health_report"]
+                                                              [0][
+                                                          "brucellossis_date"] !=
+                                                      null) ...[
+                                                    CowTableData(
+                                                      title:
+                                                          cow["cow_health_report"]
+                                                                      .length !=
+                                                                  0
+                                                              ? DateFormat(
+                                                                      'd-MM-yyyy')
+                                                                  .format(
+                                                                  DateTime
+                                                                      .parse(
+                                                                    cow["cow_health_report"]
+                                                                            [0][
+                                                                        "brucellossis_date"],
+                                                                  ),
+                                                                )
+                                                              : "-",
+                                                      status: "Brucellosis",
+                                                      isBorder: true,
+                                                    ),
+                                                  ],
                                                 ],
                                               ),
                                             ),

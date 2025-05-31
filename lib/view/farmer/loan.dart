@@ -81,29 +81,29 @@ class LoanPage extends HookConsumerWidget {
                         width: size.width,
                       ),
                     ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
+                    // Positioned(
+                    //   top: 0,
+                    //   left: 0,
 
-                      // top: size.height * 0.1,
-                      // left: size.width * 0.2,
-                      child: CachedNetworkImage(
-                        imageUrl: url + loan["cow"]["photocover"],
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                        height: size.height * 0.4,
-                        width: size.width,
-                      ),
-                      // child: Image.asset(
-                      //   "assets/cow.png",
-                      //   fit: BoxFit.contain,
-                      //   height: size.height * 0.2,
-                      //   width: size.width * 0.6,
-                      // ),
-                    ),
+                    //   // top: size.height * 0.1,
+                    //   // left: size.width * 0.2,
+                    //   child: CachedNetworkImage(
+                    //     imageUrl: url + loan["cow"]["photocover"],
+                    //     fit: BoxFit.cover,
+                    //     alignment: Alignment.topCenter,
+                    //     placeholder: (context, url) =>
+                    //         Center(child: CircularProgressIndicator()),
+                    //     errorWidget: (context, url, error) => Icon(Icons.error),
+                    //     height: size.height * 0.4,
+                    //     width: size.width,
+                    //   ),
+                    //   // child: Image.asset(
+                    //   //   "assets/cow.png",
+                    //   //   fit: BoxFit.contain,
+                    //   //   height: size.height * 0.2,
+                    //   //   width: size.width * 0.6,
+                    //   // ),
+                    // ),
                     Positioned(
                       bottom: 0,
                       left: 0,
@@ -126,16 +126,16 @@ class LoanPage extends HookConsumerWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  SizedBox(height: 20),
-                                  Center(
-                                    child: Text(
-                                      loan["cow"]["cowname"],
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
+                                  // SizedBox(height: 20),
+                                  // Center(
+                                  //   child: Text(
+                                  //     loan["cow"]["cowname"],
+                                  //     style: TextStyle(
+                                  //       fontSize: 24,
+                                  //       fontWeight: FontWeight.bold,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SizedBox(height: 20),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(

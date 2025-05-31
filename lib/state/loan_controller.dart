@@ -27,7 +27,7 @@ class LoanController extends ChangeNotifier {
 
     final response = await apiCall(
       query:
-          "query GetUserCurrentLoan(\$id:Int!){getUserCurrentLoan (id:\$id){ id, amount, cowid, emi_amount, emi_date, end_date, loan_id, start_date, status, cow {photocover, cowname, cowtagno}}} ",
+          "query GetUserCurrentLoan(\$id:Int!){getUserCurrentLoan (id:\$id){ id, amount, emi_amount, emi_date, end_date, loan_id, start_date, status }} ",
       variables: {"id": userid},
       headers: {"content-type": "*/*"},
     );

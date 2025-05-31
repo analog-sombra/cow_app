@@ -12,7 +12,6 @@ import 'package:gaay/utils/alerts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:logger/logger.dart';
 
 // calf => male
 // heifer => Female
@@ -39,6 +38,7 @@ class FarmerCows extends HookConsumerWidget {
     Future<void> init() async {
       isLoading.value = true;
       await userControllerW.getUserById(context, id);
+
       isLoading.value = false;
     }
 
@@ -65,9 +65,16 @@ class FarmerCows extends HookConsumerWidget {
     TextEditingController foodMouth = useTextEditingController();
     TextEditingController hemorrhagicSepticemia = useTextEditingController();
     TextEditingController blackQuarter = useTextEditingController();
-    TextEditingController brucellossinDate = useTextEditingController();
+    TextEditingController brucellossisDate = useTextEditingController();
     TextEditingController lastCalf = useTextEditingController();
     TextEditingController heatPeriod = useTextEditingController();
+
+    TextEditingController deathdate = useTextEditingController();
+
+    TextEditingController soldto = useTextEditingController();
+    TextEditingController solddate = useTextEditingController();
+    TextEditingController soldprice = useTextEditingController();
+    TextEditingController soldcontact = useTextEditingController();
 
     // insurance_id             String
     // insurance_name           String
@@ -86,6 +93,7 @@ class FarmerCows extends HookConsumerWidget {
     TextEditingController insuranceRenewalDate = useTextEditingController();
     TextEditingController insuranceRenewalAmount = useTextEditingController();
     TextEditingController premiumAmount = useTextEditingController();
+    ValueNotifier<bool> isInsurance = useState<bool>(false);
 
     ValueNotifier<int> toggleValue = useState<int>(0);
     ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.CALF);
@@ -157,8 +165,24 @@ class FarmerCows extends HookConsumerWidget {
         final ImageSource? source = await showImageSourceDialog(context);
         if (source == null) return; // User closed the dialog
 
-        final XFile? image = await picker.pickImage(source: source);
+        final XFile? image = await picker.pickImage(
+            source: source,
+            requestFullMetadata: false,
+            maxHeight: 500,
+            maxWidth: 500);
         if (image == null) return;
+
+        // final File imageFile = File(image.path);
+        // final int imagesize = await imageFile.length();
+        // const int maxSizeInBytes = 1 * 1024 * 1024; // 1 MB
+
+        // if (imagesize > maxSizeInBytes) {
+        //   if (context.mounted) {
+        //     erroralert(context, "Error", 'Image size should be less than 1 MB');
+        //   }
+        //   return;
+        // }
+
         profileImage.value = File(image.path);
       } on PlatformException catch (_) {
         if (context.mounted) {
@@ -171,6 +195,7 @@ class FarmerCows extends HookConsumerWidget {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
+        locale: const Locale('en', 'IN'),
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now(),
@@ -566,7 +591,7 @@ class FarmerCows extends HookConsumerWidget {
                               disabledBorder: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 20),
-                              label: const Text("Daily Weight (Kgs)"),
+                              label: const Text("Weight (Kgs)"),
                               labelStyle: const TextStyle(
                                 height: 0.1,
                                 color: Color.fromARGB(255, 107, 105, 105),
@@ -678,435 +703,689 @@ class FarmerCows extends HookConsumerWidget {
                             isScroll: false,
                           ),
 
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: lastDeworming,
-                            label: "Last Deworming Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: lastTreatment,
-                            label: "Last Treatment Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: lastVaccine,
-                            label: "Last Vaccine Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: lastCalf,
-                            label: "Last Calf Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: lastSickness,
-                            label: "Last Sickness Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: foodMouth,
-                            label: "Last Food Mouth Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: hemorrhagicSepticemia,
-                            label: "Last Hemorrhagic Septicemia Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: blackQuarter,
-                            label: "Last Black Quarter Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: brucellossinDate,
-                            label: "Last Brucellossin Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: heatPeriod,
-                            label: "Last Heat Period Date",
-                          ),
+                          if (cowstatus.value == COWSTATUS.ALIVE) ...[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: lastDeworming,
+                              label: "Last Deworming Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: lastTreatment,
+                              label: "Last Treatment Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: lastVaccine,
+                              label: "Last Vaccine Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: lastCalf,
+                              label: "Last Calf Date",
+                              firstDate: DateTime(2015, 8),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: lastSickness,
+                              label: "Last Sickness Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: foodMouth,
+                              label: "Last Foot & Mouth Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: hemorrhagicSepticemia,
+                              label: "Last Hemorrhagic Septicemia Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 500)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: blackQuarter,
+                              label: "Last Black Quarter Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 500)),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            if (gender.value == GENDER.HEIFER) ...[
+                              DateTextController(
+                                controller: brucellossisDate,
+                                label: "Last Brucellossis Date",
+                                firstDate: DateTime(2015, 8),
+                                lastDate: DateTime.now(),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                            DateTextController(
+                              controller: heatPeriod,
+                              label: "Last Heat Period Date",
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate: DateTime.now(),
+                            ),
+                          ],
+
+                          if (cowstatus.value == COWSTATUS.DEAD) ...[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: deathdate,
+                              label: "Death Date",
+                              firstDate: DateTime(2015, 8),
+                              lastDate: DateTime.now(),
+                            ),
+                          ],
+                          if (cowstatus.value == COWSTATUS.SOLD) ...[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Sold to";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16.0,
+                              ),
+                              controller: soldto,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Sold to"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DateTextController(
+                              controller: solddate,
+                              label: "sold Date",
+                              firstDate: DateTime(2015, 8),
+                              lastDate: DateTime.now(),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Sold contact";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16.0,
+                              ),
+                              controller: soldcontact,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Sold Contact"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Sold price";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16.0,
+                              ),
+                              controller: soldprice,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Sold Price"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ],
                           const SizedBox(
                             height: 20,
                           ),
 
-                          Text(
-                            "Insurance Details",
-                            textScaler: TextScaler.linear(1),
-                            style: TextStyle(
-                              fontSize: 22,
-                              height: 1,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
+                          // is insurance checkebox
+                          Container(
+                            padding: const EdgeInsets.only(left: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: Colors.grey.shade700,
+                                width: 0.2,
+                              ),
+                            ),
+                            child: CheckboxListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              title: const Text(
+                                "Insurance Available",
+                                textScaler: TextScaler.linear(1),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  height: 1,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              value: isInsurance.value,
+                              onChanged: (value) {
+                                isInsurance.value = value!;
+                              },
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance ID";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                          if (isInsurance.value) ...[
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: insuranceId,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
+                            Text(
+                              "Insurance Details",
+                              textScaler: TextScaler.linear(1),
+                              style: TextStyle(
+                                fontSize: 22,
+                                height: 1,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance ID"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance ID";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: insuranceId,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance ID"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance Name";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.name,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: insuranceName,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance Name"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance Company Name";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.name,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: insuranceName,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance Company Name"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance Type";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.name,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: insuranceType,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance Type"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance Type";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.name,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: insuranceType,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance Type"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance Amount";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: insuranceAmount,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance Amount"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            InsuranceDateTextController(
+                              controller: insuranceDate,
+                              label: "Insurance Date",
+                              insuranceRenewalDate: insuranceRenewalDate,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance Amount";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: insuranceAmount,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance Amount"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance Renewal Amount";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: insuranceRenewalAmount,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance Renewal Amount"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance Premium Amount";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: premiumAmount,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance Premium Amount"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              // return null;
-                              if (value == "" ||
-                                  value == null ||
-                                  value.isEmpty) {
-                                return "Enter Insurance Premium Amount";
-                              }
-                              return null;
-                            },
-                            cursorColor: Colors.black,
-                            cursorWidth: 0.8,
-                            cursorHeight: 25,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
+                            const SizedBox(
+                              height: 20,
                             ),
-                            controller: premiumAmount,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade700,
-                                  width: 0.2,
-                                ),
-                              ),
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 20),
-                              label: const Text("Insurance Premium Amount"),
-                              labelStyle: const TextStyle(
-                                height: 0.1,
-                                color: Color.fromARGB(255, 107, 105, 105),
+                            InsuranceRenewalDateTextController(
+                              controller: insuranceRenewalDate,
+                              label: "Insurance Renewal Date",
+                              insuranceDate: insuranceDate,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                // return null;
+                                if (value == "" ||
+                                    value == null ||
+                                    value.isEmpty) {
+                                  return "Enter Insurance Renewal Amount";
+                                }
+                                return null;
+                              },
+                              cursorColor: Colors.black,
+                              cursorWidth: 0.8,
+                              cursorHeight: 25,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 16.0,
                               ),
+                              controller: insuranceRenewalAmount,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey.shade200,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey.shade700,
+                                    width: 0.2,
+                                  ),
+                                ),
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                label: const Text("Insurance Renewal Amount"),
+                                labelStyle: const TextStyle(
+                                  height: 0.1,
+                                  color: Color.fromARGB(255, 107, 105, 105),
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
-                          ),
-
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: insuranceDate,
-                            label: "Insurance Date",
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          DateTextController(
-                            controller: insuranceRenewalDate,
-                            label: "Insurance Renewal Date",
-                          ),
+                          ],
 
                           const SizedBox(
                             height: 20,
@@ -1137,66 +1416,173 @@ class FarmerCows extends HookConsumerWidget {
                                       "Please select cow date of birth");
                                   return;
                                 }
-                                if (lastVaccine.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow last vaccine date");
-                                  return;
+
+                                if (cowstatus.value == COWSTATUS.SOLD) {
+                                  if (solddate.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please select cow sold date");
+                                    return;
+                                  }
+                                  if (soldto.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter sold to");
+                                    return;
+                                  }
+                                  if (soldcontact.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter sold contact");
+                                    return;
+                                  }
+                                  if (soldprice.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter sold price");
+                                    return;
+                                  }
                                 }
-                                if (lastTreatment.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow last treatment date");
-                                  return;
-                                }
-                                if (lastDeworming.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow last deworming date");
-                                  return;
-                                }
-                                if (lastCalf.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow last calf date");
-                                  return;
-                                }
-                                if (lastSickness.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow last sickness date");
-                                  return;
-                                }
-                                if (foodMouth.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow food mouth date");
-                                  return;
-                                }
-                                if (hemorrhagicSepticemia.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow hemorrhagic septicemia date");
-                                  return;
-                                }
-                                if (blackQuarter.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow black quarter date");
-                                  return;
-                                }
-                                if (brucellossinDate.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow brucellossin date");
-                                  return;
+                                if (cowstatus.value == COWSTATUS.DEAD) {
+                                  if (deathdate.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please select cow death date");
+                                    return;
+                                  }
                                 }
 
-                                if (heatPeriod.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please select cow heat period date");
-                                  return;
-                                }
-                                if (insuranceDate.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please enter insurance id");
-                                  return;
-                                }
-                                if (insuranceRenewalDate.text.isEmpty) {
-                                  erroralert(context, "Error",
-                                      "Please enter insurance renewal date");
-                                  return;
+                                // if (cowstatus.value == COWSTATUS.ALIVE) {
+                                //   if (lastVaccine.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow last vaccine date");
+                                //     return;
+                                //   }
+                                //   if (lastTreatment.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow last treatment date");
+                                //     return;
+                                //   }
+                                //   if (lastDeworming.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow last deworming date");
+                                //     return;
+                                //   }
+                                //   if (lastCalf.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow last calf date");
+                                //     return;
+                                //   }
+                                //   if (lastSickness.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow last sickness date");
+                                //     return;
+                                //   }
+                                //   if (foodMouth.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow foot & mouth date");
+                                //     return;
+                                //   }
+                                //   if (hemorrhagicSepticemia.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow hemorrhagic septicemia date");
+                                //     return;
+                                //   }
+                                //   if (blackQuarter.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow black quarter date");
+                                //     return;
+                                //   }
+                                //   // if (gender.value == GENDER.HEIFER) {
+                                //   //   if (brucellossisDate.text.isEmpty) {
+                                //   //     erroralert(context, "Error",
+                                //   //         "Please select cow brucellossis date");
+                                //   //     return;
+                                //   //   }
+                                //   // }
+                                //   if (heatPeriod.text.isEmpty) {
+                                //     erroralert(context, "Error",
+                                //         "Please select cow heat period date");
+                                //     return;
+                                //   }
+                                //   // if (insuranceDate.text.isEmpty) {
+                                //   //   erroralert(context, "Error",
+                                //   //       "Please enter insurance id");
+                                //   //   return;
+                                //   // }
+                                //   // if (insuranceRenewalDate.text.isEmpty) {
+                                //   //   erroralert(context, "Error",
+                                //   //       "Please enter insurance renewal date");
+                                //   //   return;
+                                //   // }
+                                // }
+
+                                if (isInsurance.value) {
+                                  if (insuranceId.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance id");
+                                    return;
+                                  }
+
+                                  if (insuranceName.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance company name");
+                                    return;
+                                  }
+
+                                  if (insuranceType.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance type");
+                                    return;
+                                  }
+
+                                  if (insuranceAmount.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance amount");
+                                    return;
+                                  }
+
+                                  if (insuranceRenewalAmount.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance renewal amount");
+                                    return;
+                                  }
+
+                                  if (premiumAmount.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please enter insurance premium amount");
+                                    return;
+                                  }
+
+                                  if (insuranceDate.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please select insurance date");
+                                    return;
+                                  }
+
+                                  if (insuranceRenewalDate.text.isEmpty) {
+                                    erroralert(context, "Error",
+                                        "Please select insurance renewal date");
+                                    return;
+                                  }
+
+                                  // premium amount should be less then insurance amount
+                                  if (insuranceAmount.text.isNotEmpty &&
+                                      insuranceRenewalAmount.text.isNotEmpty) {
+                                    if (double.parse(
+                                            insuranceRenewalAmount.text) >
+                                        double.parse(insuranceAmount.text)) {
+                                      erroralert(context, "Error",
+                                          "Insurance renewal amount should be less then insurance amount");
+                                      return;
+                                    }
+                                  }
+
+                                  // premium amount should be less then insurance amount
+                                  if (insuranceAmount.text.isNotEmpty &&
+                                      premiumAmount.text.isNotEmpty) {
+                                    if (double.parse(premiumAmount.text) >
+                                        double.parse(insuranceAmount.text)) {
+                                      erroralert(context, "Error",
+                                          "Insurance Premium amount should be less then insurance amount");
+                                      return;
+                                    }
+                                  }
                                 }
 
                                 if (formKey.currentState!.validate()) {
@@ -1231,36 +1617,137 @@ class FarmerCows extends HookConsumerWidget {
                                     "photocover": responseimag.data,
                                     "alias": name.text,
                                     "status": "ACTIVE",
+                                    "createdById": await userControllerW
+                                        .getCurrentUserId(context),
                                     "noofcalves": 0,
-                                    "last_treatment_date":
-                                        convertToDate(lastTreatment.text),
-                                    "last_vaccine_date":
-                                        convertToDate(lastVaccine.text),
-                                    "last_deworming_date":
-                                        convertToDate(lastDeworming.text),
-                                    "last_calf_birthdate":
-                                        convertToDate(lastCalf.text),
-                                    "last_sickness_date":
-                                        convertToDate(lastSickness.text),
-                                    "food_and_mouth_date":
-                                        convertToDate(foodMouth.text),
-                                    "hemorrhagic_septicemia_date":
-                                        convertToDate(
-                                            hemorrhagicSepticemia.text),
-                                    "black_quarter_date":
-                                        convertToDate(blackQuarter.text),
-                                    "brucellossis_date":
-                                        convertToDate(brucellossinDate.text),
-                                    "heat_period":
-                                        convertToDate(heatPeriod.text),
+                                    ...(cowstatus.value == COWSTATUS.SOLD
+                                        ? {
+                                            "sold_date":
+                                                convertToDate(solddate.text),
+                                            "sold_to": soldto.text,
+                                            "sold_contact": soldcontact.text,
+                                            "sold_price": soldprice.text,
+                                          }
+                                        : {}),
+                                    ...(cowstatus.value == COWSTATUS.DEAD
+                                        ? {
+                                            "death_date":
+                                                convertToDate(deathdate.text),
+                                          }
+                                        : {}),
+                                    ...(cowstatus.value == COWSTATUS.ALIVE
+                                        ? {
+                                            ...(lastVaccine.text.isNotEmpty
+                                                ? {
+                                                    "last_vaccine_date":
+                                                        convertToDate(
+                                                            lastVaccine.text),
+                                                  }
+                                                : {}),
+                                            ...(lastTreatment.text.isNotEmpty
+                                                ? {
+                                                    "last_treatment_date":
+                                                        convertToDate(
+                                                            lastTreatment.text),
+                                                  }
+                                                : {}),
+                                            ...(lastDeworming.text.isNotEmpty
+                                                ? {
+                                                    "last_deworming_date":
+                                                        convertToDate(
+                                                            lastDeworming.text),
+                                                  }
+                                                : {}),
+                                            ...(lastCalf.text.isNotEmpty
+                                                ? {
+                                                    "last_calf_birthdate":
+                                                        convertToDate(
+                                                            lastCalf.text),
+                                                  }
+                                                : {}),
+                                            ...(lastSickness.text.isNotEmpty
+                                                ? {
+                                                    "last_sickness_date":
+                                                        convertToDate(
+                                                            lastSickness.text),
+                                                  }
+                                                : {}),
+                                            ...(foodMouth.text.isNotEmpty
+                                                ? {
+                                                    "food_and_mouth_date":
+                                                        convertToDate(
+                                                            foodMouth.text),
+                                                  }
+                                                : {}),
+                                            ...(hemorrhagicSepticemia
+                                                    .text.isNotEmpty
+                                                ? {
+                                                    "hemorrhagic_septicemia_date":
+                                                        convertToDate(
+                                                            hemorrhagicSepticemia
+                                                                .text),
+                                                  }
+                                                : {}),
+                                            ...(blackQuarter.text.isNotEmpty
+                                                ? {
+                                                    "black_quarter_date":
+                                                        convertToDate(
+                                                            blackQuarter.text),
+                                                  }
+                                                : {}),
+                                            ...(heatPeriod.text.isNotEmpty
+                                                ? {
+                                                    "heat_period":
+                                                        convertToDate(
+                                                            heatPeriod.text),
+                                                  }
+                                                : {}),
+
+                                            // "last_treatment_date":
+                                            //     convertToDate(
+                                            //         lastTreatment.text),
+                                            // "last_deworming_date":
+                                            //     convertToDate(
+                                            //         lastDeworming.text),
+                                            // "last_calf_birthdate":
+                                            //     convertToDate(lastCalf.text),
+                                            // "last_sickness_date": convertToDate(
+                                            //     lastSickness.text),
+                                            // "food_and_mouth_date":
+                                            //     convertToDate(foodMouth.text),
+                                            // "hemorrhagic_septicemia_date":
+                                            //     convertToDate(
+                                            //         hemorrhagicSepticemia.text),
+                                            // "black_quarter_date": convertToDate(
+                                            //     blackQuarter.text),
+                                            // "heat_period":
+                                            //     convertToDate(heatPeriod.text),
+                                            "brucellossis_date": gender.value ==
+                                                    GENDER.HEIFER
+                                                ? brucellossisDate
+                                                            .text.isEmpty ||
+                                                        brucellossisDate.text ==
+                                                            ""
+                                                    ? DateTime(1901, 1, 1)
+                                                        .toIso8601String()
+                                                    : convertToDate(
+                                                        brucellossisDate.text)
+                                                : DateTime(1901, 1, 1)
+                                                    .toIso8601String(),
+                                          }
+                                        : {}),
                                     "insurance_id": insuranceId.text,
                                     "insurance_name": insuranceName.text,
                                     "insurance_type": insuranceType.text,
                                     "insurance_amount": insuranceAmount.text,
-                                    "insurance_date":
-                                        convertToDate(insuranceDate.text),
-                                    "insurance_renewal_date": convertToDate(
-                                        insuranceRenewalDate.text),
+                                    "insurance_date": insuranceDate.text == ""
+                                        ? null
+                                        : convertToDate(insuranceDate.text),
+                                    "insurance_renewal_date":
+                                        insuranceRenewalDate.text == ""
+                                            ? null
+                                            : convertToDate(
+                                                insuranceRenewalDate.text),
                                     "insurance_renewal_amount":
                                         insuranceRenewalAmount.text,
                                     "premium_amount": premiumAmount.text,
@@ -1284,7 +1771,7 @@ class FarmerCows extends HookConsumerWidget {
                                   foodMouth.clear();
                                   hemorrhagicSepticemia.clear();
                                   blackQuarter.clear();
-                                  brucellossinDate.clear();
+                                  brucellossisDate.clear();
                                   heatPeriod.clear();
 
                                   insuranceId.clear();
@@ -1329,10 +1816,14 @@ class FarmerCows extends HookConsumerWidget {
 class DateTextController extends HookConsumerWidget {
   final TextEditingController controller;
   final String label;
+  final DateTime firstDate;
+  final DateTime lastDate;
   const DateTextController({
     super.key,
     required this.controller,
     required this.label,
+    required this.firstDate,
+    required this.lastDate,
   });
 
   @override
@@ -1341,9 +1832,10 @@ class DateTextController extends HookConsumerWidget {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
+        locale: const Locale('en', 'IN'),
         initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime.now(),
+        firstDate: firstDate,
+        lastDate: lastDate,
       );
       if (picked != null) {
         if (!context.mounted) return;
@@ -1399,8 +1891,173 @@ class DateTextController extends HookConsumerWidget {
   }
 }
 
+class InsuranceDateTextController extends HookConsumerWidget {
+  final TextEditingController controller;
+  final String label;
+  final TextEditingController insuranceRenewalDate;
+
+  const InsuranceDateTextController({
+    super.key,
+    required this.controller,
+    required this.label,
+    required this.insuranceRenewalDate,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> cowDateChange(TextEditingController dateData) async {
+      // block future date
+      DateTime? picked = await showDatePicker(
+        context: context,
+        locale: const Locale('en', 'IN'),
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime.now(),
+      );
+      if (picked != null) {
+        if (!context.mounted) return;
+        // formate date dd-mm-yyyy
+        // dob.text = picked.toString();
+        dateData.text = "${picked.day}-${picked.month}-${picked.year}";
+      }
+    }
+
+    return TextFormField(
+      onTap: () {
+        cowDateChange(controller);
+        insuranceRenewalDate.clear();
+      },
+      readOnly: true,
+      cursorColor: Colors.black,
+      cursorWidth: 0.8,
+      cursorHeight: 25,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 16.0,
+      ),
+      controller: controller,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey.shade200,
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        label: Text(label),
+        labelStyle: const TextStyle(
+          height: 0.1,
+          color: Color.fromARGB(255, 107, 105, 105),
+          fontSize: 16.0,
+        ),
+      ),
+    );
+  }
+}
+
+class InsuranceRenewalDateTextController extends HookConsumerWidget {
+  final TextEditingController controller;
+  final TextEditingController insuranceDate;
+  final String label;
+
+  const InsuranceRenewalDateTextController({
+    super.key,
+    required this.controller,
+    required this.label,
+    required this.insuranceDate,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> cowDateChange(TextEditingController dateData) async {
+      // block future date
+      DateTime? picked = await showDatePicker(
+        context: context,
+        locale: const Locale('en', 'IN'),
+        initialDate: DateTime.now(),
+        firstDate: insuranceDate.text.isNotEmpty
+            ? DateTime.parse(convertToDate(insuranceDate.text))
+            : DateTime(2000, 1, 1),
+        lastDate: DateTime(2100, 12, 31),
+      );
+      if (picked != null) {
+        if (!context.mounted) return;
+        // formate date dd-mm-yyyy
+        // dob.text = picked.toString();
+        dateData.text = "${picked.day}-${picked.month}-${picked.year}";
+      }
+    }
+
+    return TextFormField(
+      onTap: () {
+        if (insuranceDate.text.isEmpty) {
+          erroralert(context, "Error",
+              "Please select insurance date before selecting renewal date");
+          return;
+        }
+        cowDateChange(controller);
+      },
+      readOnly: true,
+      cursorColor: Colors.black,
+      cursorWidth: 0.8,
+      cursorHeight: 25,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 16.0,
+      ),
+      controller: controller,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey.shade200,
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.shade700,
+            width: 0.2,
+          ),
+        ),
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        label: Text(label),
+        labelStyle: const TextStyle(
+          height: 0.1,
+          color: Color.fromARGB(255, 107, 105, 105),
+          fontSize: 16.0,
+        ),
+      ),
+    );
+  }
+}
+
 String convertToDate(String dateString) {
-  Logger().d("dateString: $dateString");
   List<String> parts = dateString.split('-');
   if (parts.length != 3) {
     throw FormatException("Invalid date format. Expected DD-MM-YYYY");

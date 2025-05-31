@@ -4,6 +4,7 @@ import 'package:gaay/router/router.dart';
 import 'package:gaay/state/connection.dart';
 import 'package:gaay/utils/state_logger.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,16 @@ class CowApp extends HookConsumerWidget {
     return ScrollConfiguration(
       behavior: MyBehavior(),
       child: MaterialApp.router(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', 'GB'), // English, UK
+          Locale('ar', 'AE'), // Arabic, UAE
+          Locale('en', 'IN'), // English, India
+        ],
         scaffoldMessengerKey: scaffoldMessengerKey, // Use the static key
         title: 'GAAY',
         debugShowCheckedModeBanner: false,

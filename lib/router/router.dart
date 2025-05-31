@@ -13,13 +13,12 @@ import 'package:gaay/view/farmer/help.dart';
 import 'package:gaay/view/farmer/loan.dart';
 import 'package:gaay/view/farmer/payment.dart';
 import 'package:gaay/view/farmer/profile.dart';
-import 'package:gaay/view/sellers/sellercow.dart';
-import 'package:gaay/view/sellers/sellerfood.dart';
-import 'package:gaay/view/sellers/sellermedicine.dart';
 import 'package:gaay/view/stockman/add_cow.dart';
 import 'package:gaay/view/farmer/details.dart';
 import 'package:gaay/view/error404.dart';
 import 'package:gaay/view/login.dart';
+import 'package:gaay/view/stockman/addcalf.dart';
+import 'package:gaay/view/stockman/cowdetails.dart';
 import 'package:gaay/view/stockman/editcow.dart';
 import 'package:gaay/view/stockman/farmercows.dart';
 import 'package:gaay/view/welcome.dart';
@@ -121,27 +120,43 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => FoodCustomBottomNavBars(),
       ),
       GoRoute(
-          name: RouteNames.addcow,
-          path: "/addcow",
-          builder: (context, state) => AddCow(),
-          routes: [
-            GoRoute(
-              name: RouteNames.farmercows,
-              path: "farmercows/:id",
-              builder: (context, state) => FarmerCows(
-                id: int.parse(state.pathParameters["id"]!),
-              ),
-              routes: [],
+        name: RouteNames.addcow,
+        path: "/addcow",
+        builder: (context, state) => AddCow(),
+        routes: [
+          GoRoute(
+            name: RouteNames.farmercows,
+            path: "farmercows/:id",
+            builder: (context, state) => FarmerCows(
+              id: int.parse(state.pathParameters["id"]!),
             ),
-            GoRoute(
-              name: RouteNames.editcow,
-              path: "editcow/:id",
-              builder: (context, state) => EditCow(
-                id: int.parse(state.pathParameters["id"]!),
-              ),
-              routes: [],
+            routes: [],
+          ),
+          GoRoute(
+            name: RouteNames.editcow,
+            path: "editcow/:id",
+            builder: (context, state) => EditCow(
+              id: int.parse(state.pathParameters["id"]!),
             ),
-          ]),
+            routes: [
+              GoRoute(
+                name: RouteNames.addcalf,
+                path: "addcalf",
+                builder: (context, state) => AddCalf(
+                  id: int.parse(state.pathParameters["id"]!),
+                ),
+              ),
+              GoRoute(
+                name: RouteNames.cowdetails,
+                path: "cowdetails",
+                builder: (context, state) => CowDetailsPage(
+                  id: int.parse(state.pathParameters["id"]!),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(
           name: RouteNames.welcome,
           path: "/welcome",

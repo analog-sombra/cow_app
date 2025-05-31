@@ -3,16 +3,15 @@ import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
-import 'package:gaay/components/marketpopover.dart';
 import 'package:gaay/state/cow_controller.dart';
 import 'package:gaay/utils/const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class DetailsPage extends HookConsumerWidget {
+class CowDetailsPage extends HookConsumerWidget {
   final int id;
-  const DetailsPage({
+  const CowDetailsPage({
     super.key,
     required this.id,
   });
@@ -121,19 +120,6 @@ class DetailsPage extends HookConsumerWidget {
                             size: 25,
                             color: Colors.black,
                           ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      right: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          shape: BoxShape.circle,
-                        ),
-                        child: MarketPopMenuButton(
-                          cowid: cow["id"],
                         ),
                       ),
                     ),

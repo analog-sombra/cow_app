@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../utils/const.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ApiResponse {
   bool status;
@@ -23,6 +24,17 @@ Future<ApiResponse> apiCall({
   Map<String, String>? headers,
 }) async {
   try {
+    final bool isConnected =
+        await InternetConnectionChecker.instance.hasConnection;
+
+    if (!isConnected) {
+      return ApiResponse(
+        status: false,
+        data: [],
+        message: 'No Internet Connection',
+      );
+    }
+
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -126,7 +138,7 @@ Future<ApiResponse> getrequestApi(String url) async {
     return ApiResponse(
       status: true,
       data: data,
-      message: "Data get successfully",
+      message: "Data fetched Successfully",
     );
   } catch (e) {
     return ApiResponse(

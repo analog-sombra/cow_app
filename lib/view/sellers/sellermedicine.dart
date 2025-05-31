@@ -1006,6 +1006,7 @@ class DateTextController extends HookConsumerWidget {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
+        locale: const Locale('en', 'IN'),
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now(),

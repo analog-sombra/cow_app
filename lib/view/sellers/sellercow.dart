@@ -39,7 +39,7 @@ class SellerCow extends HookConsumerWidget {
     TextEditingController foodMouth = useTextEditingController();
     TextEditingController hemorrhagicSepticemia = useTextEditingController();
     TextEditingController blackQuarter = useTextEditingController();
-    TextEditingController brucellossinDate = useTextEditingController();
+    TextEditingController brucellossisDate = useTextEditingController();
     TextEditingController lastCalf = useTextEditingController();
     TextEditingController heatPeriod = useTextEditingController();
 
@@ -66,6 +66,7 @@ class SellerCow extends HookConsumerWidget {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
+        locale: const Locale('en', 'IN'),
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now(),
@@ -587,7 +588,7 @@ class SellerCow extends HookConsumerWidget {
                       disabledBorder: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 8, horizontal: 20),
-                      label: const Text("Daily Weight (Kgs)"),
+                      label: const Text("Weight (Kgs)"),
                       labelStyle: const TextStyle(
                         height: 0.1,
                         color: Color.fromARGB(255, 107, 105, 105),
@@ -686,7 +687,7 @@ class SellerCow extends HookConsumerWidget {
                   ),
                   DateTextController(
                     controller: foodMouth,
-                    label: "Last Food Mouth Date",
+                    label: "Last Foot & Mouth Date",
                   ),
                   const SizedBox(
                     height: 20,
@@ -706,8 +707,8 @@ class SellerCow extends HookConsumerWidget {
                     height: 20,
                   ),
                   DateTextController(
-                    controller: brucellossinDate,
-                    label: "Last Brucellossin Date",
+                    controller: brucellossisDate,
+                    label: "Last Brucellossis Date",
                   ),
                   const SizedBox(
                     height: 20,
@@ -780,7 +781,7 @@ class SellerCow extends HookConsumerWidget {
                             "hemorrhagic_septicemia_date":
                                 hemorrhagicSepticemia.text,
                             "black_quarter_date": blackQuarter.text,
-                            "brucellossis_date": brucellossinDate.text,
+                            "brucellossis_date": brucellossisDate.text,
                             "heat_period": heatPeriod.text,
                           });
                         }
@@ -801,7 +802,7 @@ class SellerCow extends HookConsumerWidget {
                         foodMouth.clear();
                         hemorrhagicSepticemia.clear();
                         blackQuarter.clear();
-                        brucellossinDate.clear();
+                        brucellossisDate.clear();
                         heatPeriod.clear();
 
                         profileImage.value = null;
@@ -841,6 +842,7 @@ class DateTextController extends HookConsumerWidget {
       // block future date
       DateTime? picked = await showDatePicker(
         context: context,
+        locale: const Locale('en', 'IN'),
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime.now(),

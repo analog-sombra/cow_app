@@ -59,29 +59,44 @@ class TreatmentsPage extends HookConsumerWidget {
                     child: CircularProgressIndicator(),
                   ),
                 )
-              : SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      for (var cow in cows)
-                        TreatmentsCard(
-                          id: cow["id"],
-                          photo: cow["photocover"],
-                          name: cow["cowname"],
-                          vaccine: cow["cow_health_report"].length != 0
-                              ? cow["cow_health_report"][0]["last_vaccine_date"]
-                                  .toString()
-                              : null,
-                          milk: cow["daily_milk_produce"].toString(),
-                          doctor: cow["cow_health_report"].length != 0
-                              ? cow["cow_health_report"][0]
-                                      ["last_treatment_date"]
-                                  .toString()
-                              : null,
+              : cows.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: Text(
+                          "કોઈ ગાય મળી નથી",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textScaler: TextScaler.linear(1),
                         ),
-                    ],
-                  ),
-                ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          for (var cow in cows)
+                            TreatmentsCard(
+                              id: cow["id"],
+                              photo: cow["photocover"],
+                              name: cow["cowname"],
+                              vaccine: cow["cow_health_report"].length != 0
+                                  ? cow["cow_health_report"][0]
+                                          ["last_vaccine_date"]
+                                      .toString()
+                                  : null,
+                              milk: cow["daily_milk_produce"].toString(),
+                              doctor: cow["cow_health_report"].length != 0
+                                  ? cow["cow_health_report"][0]
+                                          ["last_treatment_date"]
+                                      .toString()
+                                  : null,
+                            ),
+                        ],
+                      ),
+                    ),
         ),
       ),
     );
