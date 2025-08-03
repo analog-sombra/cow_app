@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gaay/state/cow_controller.dart';
-import 'package:gaay/state/market_controller.dart';
+import 'package:gaay/state/medical_controller.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CowHealthForm extends HookConsumerWidget {
@@ -14,11 +15,9 @@ class CowHealthForm extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cowControllerW = ref.watch(cowController);
-    final marketControllerW = ref.watch(marketController);
+    final medicalControllerW = ref.watch(medicalController);
 
     final size = MediaQuery.of(context).size;
-    ValueNotifier<bool> isLoading = useState(false);
-
     final GlobalKey<FormState> formKey =
         useMemoized(() => GlobalKey<FormState>());
 
@@ -174,58 +173,23 @@ class CowHealthForm extends HookConsumerWidget {
                         ),
                       ),
                       onPressed: () async {
-                        // if (profileImage.value == null) {
-                        //   erroralert(
-                        //       context, "Error", "Please select food photo");
-                        //   return;
-                        // }
-
-                        // final responseimag =
-                        //     await uploadFile(profileImage.value!, "foodmarket");
-                        // if (!responseimag.status) {
-                        //   isLoading.value = false;
-                        //   if (context.mounted) {
-                        //     return erroralert(
-                        //       context,
-                        //       "Error",
-                        //       responseimag.message,
-                        //     );
-                        //   }
-                        // }
-
-                        // if (formKey.currentState!.validate()) {
-                        //   if (!context.mounted) return;
-
-                        //   await marketControllerW.addMarketFood(context, {
-                        //     "name": name.text,
-                        //     "size": dataSize.text,
-                        //     "pack_size": packSize.text,
-                        //     "mrp": mrp.text,
-                        //     "cover": responseimag.data,
-                        //     "description": description.text,
-                        //     "size_unit":
-                        //         sizeUnit.value.toString().split('.').last,
-                        //     "purpose": purpose.text,
-                        //     "composition": composition.text,
-                        //     "manufacturer": manufacturer.text,
-                        //     "large_description": largeDescription.text,
-                        //     "purchase_price": purchasePrice.text,
-                        //   });
-                        // }
-
-                        // // reset all fields
-                        // name.clear();
-                        // dataSize.clear();
-                        // packSize.clear();
-                        // mrp.clear();
-                        // description.clear();
-                        // purpose.clear();
-                        // composition.clear();
-                        // manufacturer.clear();
-                        // largeDescription.clear();
-                        // purchasePrice.clear();
-                        // marketControllerW.clearImages();
-                        // profileImage.value = null;
+                        if (formKey.currentState!.validate()) {
+                          await medicalControllerW.completeMedicalRequest(
+                            context,
+                            {
+                              "id": id,
+                              "follow_up_date": followupdate.text,
+                              "follow_up_treatment": followuptreatment.text,
+                              "treatment_provided": treatmentProvided.text,
+                            },
+                          );
+                        }
+                        // reset all fields
+                        treatmentProvided.clear();
+                        followupdate.clear();
+                        followuptreatment.clear();
+                        if (!context.mounted) return;
+                        context.pop();
                       },
                       child: const Text(
                         'Add Treatment',

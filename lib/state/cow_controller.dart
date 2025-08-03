@@ -62,12 +62,15 @@ class CowController extends ChangeNotifier {
   }
 
   Future<void> getCow(BuildContext context, int id) async {
+    Logger().i("starting to fetch cow details for id: $id");
     final response = await apiCall(
       query:
           "query GetCowById(\$id:Int!){getCowById (id:\$id){ id, farmerid, cowname, cowstatus, breed { name }, photocover, sex, birthdate, cowtagno, noofcalves, weight, daily_milk_produce, death_date, sold_to, sold_date, sold_price, sold_contact, calf_birth { mothercowid }, cow_health_report { black_quarter_date, brucellossis_date, food_and_mouth_date, heat_period, last_calf_birthdate, last_deworming_date, last_sickness_date, last_treatment_date, last_vaccine_date, hemorrhagic_septicemia_date }, insurance { insurance_amount,insurance_date,insurance_id,insurance_name,insurance_renewal_amount,insurance_renewal_date}}} ",
       variables: {"id": id},
       headers: {"content-type": "*/*"},
     );
+
+    Logger().i("Fetching cow details for id: $id");
 
     if (!response.status) {
       if (!context.mounted) return;

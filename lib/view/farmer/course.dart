@@ -6,7 +6,6 @@ import 'package:gaay/state/user_controller.dart';
 import 'package:gaay/utils/alerts.dart';
 import 'package:gaay/utils/const.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CoursePage extends HookConsumerWidget {

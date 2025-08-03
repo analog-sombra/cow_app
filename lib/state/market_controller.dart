@@ -5,7 +5,6 @@ import 'package:gaay/service/api.dart';
 import 'package:gaay/utils/alerts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final marketController = ChangeNotifierProvider.autoDispose<MarketController>(
@@ -349,6 +348,37 @@ class MarketController extends ChangeNotifier {
     }
 
     marketcows = response.data["getMarketCowByUser"];
+
+    notifyListeners();
+  }
+
+  Future<void> getAllMarketCowByUser(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString("id");
+    if (id == null) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", "User id not found");
+      return;
+    }
+    int userid = int.parse(id);
+    final response = await apiCall(
+      query:
+          "query GetAllMarketCowByUser(\$id:Int!){getAllMarketCowByUser(id:\$id) { id, cow {id, photocover, noofcalves, cowname, cowtagno, birthdate, daily_milk_produce }, price, verified, listingdate }}",
+      variables: {
+        "id": userid,
+      },
+      headers: {"content-type": "*/*"},
+    );
+
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+
+    
+
+    marketcows = response.data["getAllMarketCowByUser"];
 
     notifyListeners();
   }

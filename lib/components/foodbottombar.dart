@@ -25,8 +25,8 @@ class FoodCustomBottomNavBars extends HookConsumerWidget {
           data:
               MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
           child: PersistentTabView(
-            navBarHeight: 80,
-            popActionScreens: PopActionScreensType.all,
+            // navBarHeight: 80,
+            // popActionScreens: PopActionScreensType.all,
             tabs: [
               PersistentTabConfig(
                 screen: FoodHome(),

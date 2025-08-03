@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import '../utils/const.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ApiResponse {
   bool status;
@@ -24,10 +23,12 @@ Future<ApiResponse> apiCall({
   Map<String, String>? headers,
 }) async {
   try {
-    final bool isConnected =
-        await InternetConnectionChecker.instance.hasConnection;
+    // final bool isConnected =
+    //     await InternetConnectionChecker.instance.hasConnection;
 
-    if (!isConnected) {
+    bool result = await InternetConnection().hasInternetAccess;
+
+    if (!result) {
       return ApiResponse(
         status: false,
         data: [],

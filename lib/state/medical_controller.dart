@@ -44,4 +44,42 @@ class MedicalController extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> completeMedicalRequest(
+    BuildContext context,
+    Map<String, dynamic> data,
+  ) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString("id");
+    if (id == null) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", "User id not found");
+      return;
+    }
+    int userid = int.parse(id);
+
+    final response = await apiCall(
+      query:
+          "mutation CompleteMedicalRequest(\$completeMedicalInput:CompleteMedicalInput!){completeMedicalRequest (completeMedicalInput:\$completeMedicalInput){ id }} ",
+      variables: {
+        "completeMedicalInput": {
+          "id": data["id"],
+          "follow_up_date": data["follow_up_date"],
+          "follow_up_treatment": data["follow_up_treatment"],
+          "treatment_provided": data["treatment_provided"],
+          "user_id": userid,
+        }
+      },
+      headers: {"content-type": "*/*"},
+    );
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+    if (!context.mounted) return;
+    doneAlert(context, 160, "Successful", "Feedback submitted successfully");
+
+    notifyListeners();
+  }
 }

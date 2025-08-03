@@ -47,7 +47,10 @@ class AddCow extends HookConsumerWidget {
             children: [
               Icon(Icons.image, color: Colors.blue),
               const SizedBox(width: 10),
-              const Text("Select Image Source"),
+              const Text(
+                "Select Image Source",
+                style: TextStyle(fontSize: 20),
+              ),
             ],
           ),
           content: const Text(
@@ -518,6 +521,7 @@ class AddCow extends HookConsumerWidget {
                                     id: cow["id"],
                                     photo: cow["photocover"],
                                     name: longText(cow["cowname"], 16),
+                                    cowstatus: cow["cowstatus"],
                                   ),
                               ],
                             ),
@@ -540,11 +544,13 @@ class CowCard extends HookConsumerWidget {
   final int id;
   final String photo;
   final String name;
+  final String cowstatus;
   const CowCard({
     super.key,
     required this.photo,
     required this.name,
     required this.id,
+    required this.cowstatus,
   });
 
   @override
@@ -571,6 +577,14 @@ class CowCard extends HookConsumerWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(20),
           ),
+          border: Border.all(
+            color: cowstatus == "ALIVE"
+                ? Colors.green
+                : cowstatus == "DEAD"
+                    ? Colors.red
+                    : Colors.orange,
+            width: 3,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -593,10 +607,10 @@ class CowCard extends HookConsumerWidget {
             ),
             SizedBox(height: 10),
             Text(
-              name,
+              longText(name, 10),
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 18,
                 height: 1,
                 fontWeight: FontWeight.w400,
               ),

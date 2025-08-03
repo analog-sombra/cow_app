@@ -2,10 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gaay/router/routername.dart';
 import 'package:gaay/state/market_controller.dart';
 import 'package:gaay/utils/const.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 String getYears(String date) {
@@ -28,7 +26,7 @@ class CowHome extends HookConsumerWidget {
 
     Future<void> init() async {
       isLoading.value = true;
-      await marketControllerW.getMarketCowByUser(context);
+      await marketControllerW.getAllMarketCowByUser(context);
 
       isLoading.value = false;
     }

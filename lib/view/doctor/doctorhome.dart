@@ -4,16 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:gaay/components/doctorpopover.dart';
-import 'package:gaay/components/popover.dart';
 import 'package:gaay/router/routername.dart';
 import 'package:gaay/state/cow_controller.dart';
 import 'package:gaay/state/user_controller.dart';
-import 'package:gaay/utils/alerts.dart';
 import 'package:gaay/utils/const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 class DoctorHome extends HookConsumerWidget {
   const DoctorHome({super.key});

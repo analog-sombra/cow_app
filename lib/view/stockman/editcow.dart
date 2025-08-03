@@ -16,7 +16,6 @@ import 'package:gaay/utils/const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:logger/logger.dart';
 
 // calf => male
 // heifer => Female
@@ -101,7 +100,10 @@ class EditCow extends HookConsumerWidget {
             children: [
               Icon(Icons.image, color: Colors.blue),
               const SizedBox(width: 10),
-              const Text("Select Image Source"),
+              const Text(
+                "Select Image Source",
+                style: TextStyle(fontSize: 20),
+              ),
             ],
           ),
           content: const Text(

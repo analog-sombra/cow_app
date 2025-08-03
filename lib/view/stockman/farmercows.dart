@@ -95,8 +95,8 @@ class FarmerCows extends HookConsumerWidget {
     TextEditingController premiumAmount = useTextEditingController();
     ValueNotifier<bool> isInsurance = useState<bool>(false);
 
-    ValueNotifier<int> toggleValue = useState<int>(0);
-    ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.CALF);
+    ValueNotifier<int> toggleValue = useState<int>(1);
+    ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.HEIFER);
 
     ValueNotifier<int> cowstatusValue = useState<int>(0);
     ValueNotifier<COWSTATUS> cowstatus = useState<COWSTATUS>(COWSTATUS.ALIVE);
@@ -115,7 +115,10 @@ class FarmerCows extends HookConsumerWidget {
             children: [
               Icon(Icons.image, color: Colors.blue),
               const SizedBox(width: 10),
-              const Text("Select Image Source"),
+              const Text(
+                "Select Image Source",
+                style: TextStyle(fontSize: 20),
+              ),
             ],
           ),
           content: const Text(
@@ -599,55 +602,55 @@ class FarmerCows extends HookConsumerWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FlutterToggleTab(
-                            unSelectedBackgroundColors: [
-                              Colors.grey.shade200,
-                              Colors.grey.shade200,
-                              Colors.grey.shade200
-                            ],
-                            marginSelected: EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 6,
-                            ),
-                            borderRadius: 5,
-                            width: MediaQuery.of(context).size.width * 0.21,
-                            selectedTextStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            unSelectedTextStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                            selectedIndex: toggleValue.value,
-                            selectedBackgroundColors: [
-                              Colors.black.withValues(alpha: 0.6),
-                              Colors.black.withValues(alpha: 0.6),
-                            ],
-                            // minWidth: 100.0,
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                          // FlutterToggleTab(
+                          //   unSelectedBackgroundColors: [
+                          //     Colors.grey.shade200,
+                          //     Colors.grey.shade200,
+                          //     Colors.grey.shade200
+                          //   ],
+                          //   marginSelected: EdgeInsets.symmetric(
+                          //     horizontal: 6,
+                          //     vertical: 6,
+                          //   ),
+                          //   borderRadius: 5,
+                          //   width: MediaQuery.of(context).size.width * 0.21,
+                          //   selectedTextStyle: TextStyle(
+                          //     color: Colors.white,
+                          //     fontSize: 18,
+                          //     fontWeight: FontWeight.w700,
+                          //   ),
+                          //   unSelectedTextStyle: TextStyle(
+                          //       color: Colors.black,
+                          //       fontSize: 16,
+                          //       fontWeight: FontWeight.w500),
+                          //   selectedIndex: toggleValue.value,
+                          //   selectedBackgroundColors: [
+                          //     Colors.black.withValues(alpha: 0.6),
+                          //     Colors.black.withValues(alpha: 0.6),
+                          //   ],
+                          //   // minWidth: 100.0,
 
-                            dataTabs: [
-                              DataTab(
-                                title: "CALF",
-                              ),
-                              DataTab(
-                                title: "HEIFER",
-                              ),
-                            ],
-                            selectedLabelIndex: (index) {
-                              toggleValue.value = index;
-                              if (index == 0) {
-                                gender.value = GENDER.CALF;
-                              } else {
-                                gender.value = GENDER.HEIFER;
-                              }
-                            },
-                            isScroll: false,
-                          ),
+                          //   dataTabs: [
+                          //     DataTab(
+                          //       title: "CALF",
+                          //     ),
+                          //     DataTab(
+                          //       title: "HEIFER",
+                          //     ),
+                          //   ],
+                          //   selectedLabelIndex: (index) {
+                          //     toggleValue.value = index;
+                          //     if (index == 0) {
+                          //       gender.value = GENDER.CALF;
+                          //     } else {
+                          //       gender.value = GENDER.HEIFER;
+                          //     }
+                          //   },
+                          //   isScroll: false,
+                          // ),
                           SizedBox(
                             height: 20,
                           ),

@@ -65,8 +65,8 @@ class AddCalf extends HookConsumerWidget {
     TextEditingController fathercowid = useTextEditingController();
     ValueNotifier<bool> isInsurance = useState<bool>(false);
 
-    ValueNotifier<int> toggleValue = useState<int>(0);
-    ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.CALF);
+    ValueNotifier<int> toggleValue = useState<int>(1);
+    ValueNotifier<GENDER> gender = useState<GENDER>(GENDER.HEIFER);
 
     // image section start from here
     ValueNotifier<File?> profileImage = useState<File?>(null);
@@ -82,7 +82,10 @@ class AddCalf extends HookConsumerWidget {
             children: [
               Icon(Icons.image, color: Colors.blue),
               const SizedBox(width: 10),
-              const Text("Select Image Source"),
+              const Text(
+                "Select Image Source",
+                style: TextStyle(fontSize: 20),
+              ),
             ],
           ),
           content: const Text(

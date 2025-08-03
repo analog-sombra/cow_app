@@ -19,6 +19,8 @@ class TreatmentsPage extends HookConsumerWidget {
 
     final cowControllerW = ref.watch(cowController);
     final cows = cowControllerW.cows;
+
+    final alivecows = cows.where((cow) => cow["cowstatus"] == "ALIVE").toList();
     Future<void> init() async {
       isLoading.value = true;
       await cowControllerW.getUserCows(context);
@@ -30,6 +32,7 @@ class TreatmentsPage extends HookConsumerWidget {
 
       return null;
     }, []);
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: isLoading.value
@@ -59,7 +62,7 @@ class TreatmentsPage extends HookConsumerWidget {
                     child: CircularProgressIndicator(),
                   ),
                 )
-              : cows.isEmpty
+              : alivecows.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Center(
@@ -77,7 +80,7 @@ class TreatmentsPage extends HookConsumerWidget {
                       physics: AlwaysScrollableScrollPhysics(),
                       child: Column(
                         children: [
-                          for (var cow in cows)
+                          for (var cow in alivecows)
                             TreatmentsCard(
                               id: cow["id"],
                               photo: cow["photocover"],
@@ -166,6 +169,18 @@ class TreatmentsCard extends HookConsumerWidget {
     this.doctor,
   });
 
+  String getFormattedDate(String? doctor) {
+    if (doctor == null || doctor.isEmpty) return "NA";
+
+    try {
+      final date = DateTime.parse(doctor);
+      return DateFormat('dd-MM-yyyy').format(date);
+    } catch (e) {
+      // Log error if needed
+      return "NA";
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
@@ -214,7 +229,7 @@ class TreatmentsCard extends HookConsumerWidget {
                       textScaler: TextScaler.linear(1),
                     ),
                     Text(
-                      "છેલ્લી રસીકરણ તારીખ : ${vaccine != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(vaccine!)) : "NA"}",
+                      "છેલ્લી રસીકરણ તારીખ : ${getFormattedDate(vaccine)}",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -230,7 +245,7 @@ class TreatmentsCard extends HookConsumerWidget {
                       textScaler: TextScaler.linear(1),
                     ),
                     Text(
-                      "આગામી ડૉક્ટર મુલાકાત : ${doctor != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(doctor!)) : "NA"}",
+                      "આગામી ડૉક્ટર મુલાકાત : ${getFormattedDate(doctor)}",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
