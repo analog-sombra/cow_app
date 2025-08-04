@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gaay/router/routername.dart';
 import 'package:gaay/state/cow_controller.dart';
 import 'package:gaay/state/medical_controller.dart';
 import 'package:go_router/go_router.dart';
@@ -189,7 +190,7 @@ class CowHealthForm extends HookConsumerWidget {
                         followupdate.clear();
                         followuptreatment.clear();
                         if (!context.mounted) return;
-                        context.pop();
+                        context.pushReplacementNamed(RouteNames.doctorhome);
                       },
                       child: const Text(
                         'Add Treatment',

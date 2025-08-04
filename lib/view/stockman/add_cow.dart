@@ -206,6 +206,27 @@ class AddCow extends HookConsumerWidget {
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                context.pushNamed(RouteNames.doctorhome);
+              },
+              child: Text(
+                "Doctor",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
             IconButton(
               icon: Icon(
                 Icons.more_vert,

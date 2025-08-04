@@ -650,9 +650,6 @@ class AddCalf extends HookConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
                         const SizedBox(
                           height: 20,
                         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gaay/utils/alerts.dart';
-import 'package:gaay/view/farmer/treatments.dart';
 import 'package:gaay/view/sellers/foodhome.dart';
 import 'package:gaay/view/sellers/sellerfood.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

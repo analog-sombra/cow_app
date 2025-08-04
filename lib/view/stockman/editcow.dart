@@ -39,8 +39,6 @@ class EditCow extends HookConsumerWidget {
     final cowControllerW = ref.watch(cowController);
     final userControllerW = ref.watch(userController);
 
-// new data start from here
-
     final GlobalKey<FormState> formKey =
         useMemoized(() => GlobalKey<FormState>());
 
@@ -88,6 +86,7 @@ class EditCow extends HookConsumerWidget {
     ValueNotifier<String> profilephoto = useState<String>("");
 
     ValueNotifier<int> motherid = useState<int>(0);
+    ValueNotifier<String> fatherid = useState<String>("");
 
     Future<ImageSource?> showImageSourceDialog(BuildContext context) async {
       return await showDialog<ImageSource>(
@@ -213,6 +212,7 @@ class EditCow extends HookConsumerWidget {
 
       if (cow["calf_birth"].length > 0) {
         motherid.value = cow["calf_birth"][0]["mothercowid"];
+        fatherid.value = cow["calf_birth"][0]["fathercowid"];
       }
 
       // Populate insurance fields
@@ -493,6 +493,34 @@ class EditCow extends HookConsumerWidget {
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
+                              ),
+                            ),
+                          ),
+                        ],
+
+                        const SizedBox(
+                          height: 20,
+                        ),
+
+                        if (fatherid.value != "") ...[
+                          Container(
+                            width: size.width,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 20,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              border: Border.all(
+                                  color: Colors.grey.shade700, width: 0.2),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              fatherid.value,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

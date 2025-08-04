@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gaay/utils/alerts.dart';
-import 'package:gaay/view/farmer/course.dart';
-import 'package:gaay/view/farmer/home.dart';
-import 'package:gaay/view/farmer/market.dart';
-import 'package:gaay/view/farmer/treatments.dart';
 import 'package:gaay/view/sellers/cowhome.dart';
 import 'package:gaay/view/sellers/sellercow.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

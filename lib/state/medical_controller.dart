@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gaay/service/api.dart';
 import 'package:gaay/utils/alerts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final medicalController = ChangeNotifierProvider.autoDispose<MedicalController>(
     (ref) => MedicalController());
 
 class MedicalController extends ChangeNotifier {
+  List<dynamic> cows = [];
+
   Future<void> createMedicalRequest(
     BuildContext context,
     int cowid,
@@ -79,6 +82,40 @@ class MedicalController extends ChangeNotifier {
     }
     if (!context.mounted) return;
     doneAlert(context, 160, "Successful", "Feedback submitted successfully");
+
+    notifyListeners();
+  }
+
+  Future<void> getDoctorMedicalRequest(
+    BuildContext context,
+    String type,
+  ) async {
+    Logger().d("Fetching doctor medical request for type: $type");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString("id");
+    if (id == null) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", "User id not found");
+      return;
+    }
+    int userid = int.parse(id);
+
+    final response = await apiCall(
+      query:
+          "query GetDoctorMedicalRequest(\$id:Int!,\$type:String!){getDoctorMedicalRequest (id:\$id,type:\$type){  id, reason, date, type, medicalStatus, type, cow {  photocover,cowname}, farmer {name}}}",
+      variables: {
+        "type": type,
+        "id": userid,
+      },
+      headers: {"content-type": "*/*"},
+    );
+    if (!response.status) {
+      if (!context.mounted) return;
+      erroralert(context, "Error", response.message);
+      return;
+    }
+
+    cows = response.data["getDoctorMedicalRequest"];
 
     notifyListeners();
   }

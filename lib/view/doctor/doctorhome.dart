@@ -5,12 +5,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:gaay/components/doctorpopover.dart';
 import 'package:gaay/router/routername.dart';
-import 'package:gaay/state/cow_controller.dart';
+import 'package:gaay/state/medical_controller.dart';
 import 'package:gaay/state/user_controller.dart';
 import 'package:gaay/utils/const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+
+enum MEDICALSTATUS { TODAY, PENDING, COMPLETED }
 
 class DoctorHome extends HookConsumerWidget {
   const DoctorHome({super.key});
@@ -21,17 +23,18 @@ class DoctorHome extends HookConsumerWidget {
     Size size = MediaQuery.of(context).size;
 
     ValueNotifier<int> toggleValue = useState<int>(0);
+    ValueNotifier<MEDICALSTATUS> status =
+        useState<MEDICALSTATUS>(MEDICALSTATUS.TODAY);
 
     final userControllerW = ref.watch(userController);
-    final cowControllerW = ref.watch(cowController);
+    final medicalControllerW = ref.watch(medicalController);
     final user = userControllerW.user;
-    final cows = cowControllerW.cows;
+    final cows = medicalControllerW.cows;
 
     Future<void> init() async {
       isLoading.value = true;
       await userControllerW.getUser(context);
-      if (!context.mounted) return;
-      await cowControllerW.getUserCows(context);
+
       isLoading.value = false;
     }
 
@@ -39,6 +42,17 @@ class DoctorHome extends HookConsumerWidget {
       init();
       return null;
     }, []);
+
+    Future<void> initcows() async {
+      if (!context.mounted) return;
+      await medicalControllerW.getDoctorMedicalRequest(
+          context, status.value.name);
+    }
+
+    useEffect(() {
+      initcows();
+      return null;
+    }, [status.value]);
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -135,18 +149,19 @@ class DoctorHome extends HookConsumerWidget {
 
                           dataTabs: [
                             DataTab(
-                              title: "Past",
+                              title: "Today",
                             ),
                             DataTab(
-                              title: "Upcoming",
+                              title: "Pending",
                             ),
                             DataTab(
-                              title: "Cancelled",
+                              title: "Completed",
                             ),
                           ],
                           // radiusStyle: true,
                           selectedLabelIndex: (index) {
                             toggleValue.value = index;
+                            status.value = MEDICALSTATUS.values[index];
                           },
                           isScroll: false,
                         ),
@@ -206,18 +221,10 @@ class DoctorHome extends HookConsumerWidget {
                       for (var cow in cows)
                         TreatmentsCard(
                           id: cow["id"],
-                          photo: cow["photocover"],
-                          name: cow["cowname"],
-                          vaccine: cow["cow_health_report"].length != 0
-                              ? cow["cow_health_report"][0]["last_vaccine_date"]
-                                  .toString()
-                              : null,
-                          milk: cow["daily_milk_produce"].toString(),
-                          doctor: cow["cow_health_report"].length != 0
-                              ? cow["cow_health_report"][0]
-                                      ["last_treatment_date"]
-                                  .toString()
-                              : null,
+                          photo: cow["cow"]["photocover"],
+                          name: cow["cow"]["cowname"],
+                          type: cow["reason"],
+                          date: cow["date"],
                         ),
                     ],
                   ),
@@ -232,18 +239,16 @@ class TreatmentsCard extends HookConsumerWidget {
   final int id;
   final String photo;
   final String name;
-  final String? vaccine;
-  final String milk;
-  final String? doctor;
+  final String type;
+  final String date;
 
   const TreatmentsCard({
     super.key,
     required this.photo,
     required this.name,
     required this.id,
-    this.vaccine,
-    required this.milk,
-    this.doctor,
+    required this.type,
+    required this.date,
   });
 
   @override
@@ -302,7 +307,7 @@ class TreatmentsCard extends HookConsumerWidget {
                         textScaler: TextScaler.linear(1),
                       ),
                       Text(
-                        "Regular checkup - $name",
+                        "Request Type - $type",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
@@ -317,9 +322,9 @@ class TreatmentsCard extends HookConsumerWidget {
                           color: Color(0xfffeefd2),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            "Scheduled - 11:30 am",
+                            "Date - ${DateFormat('dd-MM-yyyy HH:mm').format(DateTime.parse(date))}",
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
